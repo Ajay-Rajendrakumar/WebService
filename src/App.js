@@ -1,24 +1,38 @@
-import logo from './logo.svg';
+
 import './App.css';
+import React, { Component } from 'react';
+import { Router, Route, Switch } from "react-router-dom";
+import { Provider } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
+import { createBrowserHistory } from 'history';
+import store from './store/store';
+import Layout from './layouts/index';
+
+import Question from './views/questions.js';
+
+const history = createBrowserHistory();
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+        <Router history={history} exact path="/">
+          <main className="h-100">
+            <Switch>
+              <Route exact={true} path="/" render={() => (
+                <>
+                  <Layout page={"Service Oriented Architecture & WebServices"}/>
+                  <div className="main" >
+                    <Question />
+                  </div>
+                </>
+              )}
+              />
+
+            </Switch>
+            <ToastContainer />
+          </main>
+        </Router>
+      </Provider>
   );
 }
 

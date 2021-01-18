@@ -1,0 +1,30 @@
+.header {
+    position: fixed;
+    z-index: 20;
+    height: 70px;
+    width: 100%;
+    left: 0px;
+    top: 0px;
+    background: #F9F9F9;
+    border: white;
+    border-style: none none solid  none;
+}
+
+.header-right {
+    text-align: right;
+ }
+ .name-profileImage {
+    height: 40px;
+    width: 45px;
+    border-radius: 50%;
+    background: #0069d9;
+    color: #fff;
+    text-align: center;
+    line-height: 38px;
+    font-size: 20px;
+    margin-top:15px;
+    margin-left: 30px;
+    margin-right: 10px;
+    display: inline-block;
+}
+ 
