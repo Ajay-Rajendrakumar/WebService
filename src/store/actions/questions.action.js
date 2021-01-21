@@ -6,6 +6,10 @@ let api={
   "1":"dateDifference",
   "2":"setOperations",
   "3":"matrixOperation",
+  "4":"wordCurrencyConvertion",
+  "5":"rsaEncrypt",
+  "9":"generateOTP",
+  "10":"generateCaptcha"
 }
  
 

@@ -36,7 +36,7 @@ let questionList={
     "3":{
         "question":"Perform matrix operations like Transpose, Lower Diagonal (Left & Right), Upper Diagonal (Left & Right) and Swivel",
         "parameters":["order","matrix_a"],
-        "description":"Description",
+        "description":"To matrix operations like Transpose, Lower Diagonal (Left & Right), Upper Diagonal (Left & Right) and Swivel on give matrix",
         "type":["number","text"],
         "no_of_inputs":2,
         "title":["Order","Matrix"],
@@ -45,17 +45,22 @@ let questionList={
         },
     "4":{
         "question":"Convert the figure into words in currency",
-        "parameters":["currency_amount"],
-        "description":"Description",
+        "parameters":["currency"],
+        "description":"To Convert the figure into words in currency",
         "type":["number"],
         "no_of_inputs":1,
-        "title":["Currency"]
+        "title":["Currency"],
+        "result":["Currency"]
         
         },
     "5":{
         "question":"Implement the RSA algorithm for encryption and decryption",
-        "parameters":["Message"],
-        "description":"Description",
+        "parameters":["message"],
+        "description":"To Implement the RSA algorithm for encryption and decryption",
+        "type":["text"],
+        "no_of_inputs":1,
+        "title":["RSA ALgorithm"],
+        "result":["Encrpted Message","Original Message"]
     },
     "6":{
         "question":"Generate the checksum value for the given sentence using md5 algorithm",
@@ -74,19 +79,31 @@ let questionList={
     },
     "9":{
         "question":"Generate a one-time password (OTP) in numbers, alphabet and alphanumeric",
-        "parameters":["Length of OTP"],
-        "description":"Description",
+        "parameters":["otpLength"],
+        "description":"To Generate a one-time password (OTP) in numbers, alphabet and alphanumeric",
+        "type":["number"],
+        "no_of_inputs":1,
+        "title":["OTP Generation"],
+        "result":["OTP"]
     },
     "10":{
         "question":"Generate a Completely Automated Public Turing test to tell Computers and Humans Apart (CAPTCHA) for the given string",
-        "parameters":["Sentence"],
-        "description":"Description",
+        "parameters":["message"],
+        "description":"To Generate a Completely Automated Public Turing test to tell Computers and Humans Apart (CAPTCHA) for the given string",
+        "type":["text"],
+        "no_of_inputs":1,
+        "title":["Captcha Generation"],
+        "result":["Captcha"]
     },
 }
 let parametersList={
     "1":["date_1","date_2"],
     "2":["set_a","set_b"],
-    "3":["order","matrix_a"]
+    "3":["order","matrix_a"],
+    "4":["currency"],
+    "5":["message"],
+    "9":["otpLength"],
+    "10":["message"],
 }
 class Login extends Component {
     constructor(props) {
@@ -114,7 +131,7 @@ class Login extends Component {
                 "order":0,
                 "matrix":"",
                 "currency_amount":0,
-                
+                "message":"",
             },
             validateMsg:"",
             result_data:[],
@@ -469,7 +486,7 @@ class Login extends Component {
                                 <div class="card m-2" key={ind}>
                                 <div class="card-body">
                                     <h6 class="card-title row font-weight-bold text-info h6">
-                                        <div className="col-10">{(ind+1) +')'+key['title']}<span className="text-success">{' ('+key['language']+')'}</span></div>
+                                        <div className="col-10">{(result_collection.length - ind) +')'+key['title']}<span className="text-success">{' ('+key['language']+')'}</span></div>
                                         <div className="col-2">{key['time']}</div>
                                         </h6>
                                     <div class="card-text"> 
@@ -504,6 +521,12 @@ class Login extends Component {
                                                     :
                                                     key['question']==3?
                                                         this.matrixGen(key['result'][ans])
+                                                    :
+
+                                                     key['question']==10?
+                                                        <div>
+                                                            <img src={`data:image/jpeg;base64,${key['result'][ans]}`} />
+                                                        </div>
                                                     :
                                                     key['result'][ans]}</li>
                                             )
