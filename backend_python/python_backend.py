@@ -398,7 +398,7 @@ def rsaEncrypt():
         
         encrypt_data=""
         for i in encrypt_list:
-            encrypt_data=encrypt_data+chr(int(i)+97)
+            encrypt_data=encrypt_data+chr(int(i))
 
         for i in encrypt_list:
             l=encryption(public_key_1,decrypt,i)
@@ -440,6 +440,73 @@ def gcd(x,y):
             gcd = i 
               
     return gcd 
+
+@app.route('/generateOTP',methods = ['POST', 'GET'])
+@cross_origin()
+def generateOTP():
+    param_otp = request.form['otpLength']
+    if(validate(param_otp)):
+        alpha_numeric_char="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
+        otp=""
+        key=unique_key()
+        for i in range(int(param_otp)):
+            rand = getRand(0,60,key)
+            print(rand,key,i)
+            char=alpha_numeric_char[rand]
+            otp=otp+char
+            key= (key + (unique_key()/(2*(i+1))))/2
+                        
+        res=[otp]
+        output_json={"title":"Captcha Generation ","language":"Python","question":9,"params":[param_otp],"result":res,"status":200}
+        output={"data":output_json,"status":200}
+        return jsonify(output)
+    else:
+        output_json={"title":"OTP Generation","language":"Python","question":9,"params":[param_otp],"error":"Invalid OTP Length","status":200}
+        output={"data":output_json,"status":200}
+        return jsonify(output)
+
+
+def validate(otp):
+    if(int(otp)>=1):
+        return True
+    else:
+        return False
+
+def getRand(min,max,key):
+    n=(key)%10
+    m=(int(key/10)) % 10
+    n=((n+m)/2)/10  
+    return(int(n * (max - min) + min))
+
+def unique_key():
+    return datetime.now().microsecond
+
+@app.route('/generateCaptcha',methods = ['POST', 'GET'])
+@cross_origin()
+def generateCaptcha():
+    param_msg = request.form['message']
+    img = Image.new('RGB', (200, 100), color = (255, 255, 255))
+ 
+    fnt = ImageFont.truetype('./gillsans.ttf', 32)
+    d = ImageDraw.Draw(img)
+    x=10
+    y=10
+    for i in range(len(param_msg)):
+        d.text((x+(i*17),y),param_msg[i], font=fnt, fill=(0, 0, 0))
+        if(random.randint(0, 4)%2==0):
+            y=y+(random.randint(0,4) *2)
+        else:
+            y=y-(random.randint(0,4) *2)
+    img.rotate(random.randint(-10,10))
+    img.save('captcha.png')
+    res=[]
+    with open("./captcha.png", "rb") as image:
+        encoded_string = base64.b64encode(image.read())
+        res.append(encoded_string.decode("utf-8")) 
+    output_json={"title":"Captcha","language":"Python","question":10,"params":[param_msg],"result":res,"status":200}
+    output={"data":output_json,"status":200}
+    return jsonify(output)
+ 
 
 
 if __name__ == '__main__':
