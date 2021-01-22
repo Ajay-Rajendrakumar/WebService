@@ -503,7 +503,7 @@ router.post('/rsaEncrypt', function(req, res) {
         
         let encrypt_data=""
         for (var i = 0; i < encrypt_list.length; i++){
-            encrypt_data=encrypt_data+String.fromCharCode(toInteger(encrypt_list[i])+97)
+            encrypt_data=encrypt_data+String.fromCharCode(toInteger(encrypt_list[i]))
         }
  
         for (var i = 0; i < encrypt_list.length; i++){
@@ -564,6 +564,102 @@ function get_gcd(x,y){
     return gcd 
 }
 
+router.post('/generateOTP', function(req, res) {
+    let otp_len=req.body["otpLength"]
+    if(validateOTPNumber(otp_len)){
+       
+        let alpha_numeric_char="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
+        let otp=""
+        let key=unique_key()
+        for (var i = 0; i < toInteger(otp_len); i++){
+            let rand = getRand(0,60,key)
+            let char=alpha_numeric_char[rand]
+            otp=otp+char
+            key= (key + (unique_key()/(2*(i+1))))/2
+        }
+        
+        let output_json={
+            "title":"OTP Generation",
+            "language":"JavaScript",
+            "question":9,
+            "params":[otp_len],
+            "result":[otp],
+            "status":200}
+        let output={"data":output_json,"status":200}
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(output));
+    }else{
+        let result={"title":"OTP Generation","language":"JavaScript","question":9,"params":[otp_len],"error":"Invalid OTP Length","status":200}
+        let output={"data":result,"status":200};
+        res.json(output)
+    }
+
+});
+function unique_key(){
+        var d = new Date();
+        return d.getMilliseconds()
+}
+function getRand(min,max,key){
+    let n=(key)%10
+    let m=(toInteger(key/10)) % 10
+    n=((n+m)/2)/10  
+    return(toInteger(n * (max - min) + min))
+}
+function validateOTPNumber(no){
+    if(toInteger(no)>=1){
+        return true
+    }else{
+        return false
+    }
+}
+
+
+router.post('/generateCaptcha', function(req, res) {
+    let msg=req.body["message"]
+    let image = new Jimp(200, 100, 'white', (err, image) => {
+        if (err) throw err
+        })        
+        let x = 10
+        let y = 10   
+        Jimp.loadFont(Jimp.FONT_SANS_32_BLACK)
+        .then(font => {
+            for(var i=0;i<msg.length;i++){
+                    image.print(font, x+(i*17), y, msg[i])
+                    if(rand(0,4)%2===0){
+                        y=y+(rand(0,4) *2)
+                    }else{
+                        y=y-(rand(0,4) *2)
+                    }
+            }
+            image.rotate(rand(-10,10)); 
+            return image
+        }).then(image => {
+            let file = `captcha.${image.getExtension()}`
+            return image.write(file)
+        })
+    setTimeout(function () {      
+    let output_json={
+        "title":"Captcha Generation",
+        "language":"JavaScript",
+        "question":10,
+        "params":[msg],
+        "result":[base64_encode("C:/Users/USER/Desktop/webservice/backend_nodejs/captcha.png")],
+        "status":200}
+    let output={"data":output_json,"status":200}
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(output));
+}, 500)
+   
+
+});
+function base64_encode(file) {
+    var bitmap = fs.readFileSync(file);
+    return new Buffer(bitmap).toString('base64');
+}
+
+function rand(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 app.use('/node', router);
 
