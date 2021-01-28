@@ -921,13 +921,37 @@ router.post('/trignomentryFunction', function(req, res) {
 });
 function GenerateList(rad){
     res=[]
-    res.push(Math.sin(rad))
-    res.push(Math.cos(rad))
-    res.push(Math.tan(rad))
-    res.push(Math.asin(rad))
-    res.push(Math.acos(rad))
-    res.push(Math.atan(rad))
+    for(var i=1;i<=9;i++)
+        res.push(Error(rad,i))
+
     return res
+}
+function Error(rad,i){
+    try {
+        switch(i) {
+            case 1:
+                return Math.sin(rad)
+            case 2:
+                return Math.cos(rad)
+            case 3:
+                return Math.tan(rad)
+            case 4:
+                return 1/Math.sin(rad)
+            case 5:
+                return 1/Math.cos(rad)
+            case 6:
+                return 1/Math.tan(rad)
+            case 7:
+                return Math.asin(rad)
+            case 8:
+                return Math.acos(rad)
+            case 9:
+                return Math.atan(rad)
+        }
+      }
+      catch(err) {
+        return String("Not Defined")
+      }
 }
 function radian(degree){
     return degree*(Math.PI/180)
@@ -935,14 +959,15 @@ function radian(degree){
 
 router.post('/CalculateLog', function(req, res) {
     let param_number=parseFloat(req.body["number"])
+    let param_base=parseFloat(req.body["base"])
     
     let Nlog=log(param_number)
-    let Log=log(param_number)/log(10)
+    let Log=log(param_number)/log(param_base)
     let output_json={
         "title":"Logarithm",
         "language":"JavaScript",
         "question":"Logarithm",
-        "params":[param_number],
+        "params":[param_number,param_base],
         "result":[Nlog,Log],
         "status":200}
     let output={"data":output_json,"status":200}
@@ -956,13 +981,13 @@ function log(x){
 }
 router.post('/CalculateAntiLog', function(req, res) {
     let param_number=parseFloat(req.body["number"])
-    
-    let Alog= Math.pow(10,param_number)
+    let param_base=parseFloat(req.body["base"])
+    let Alog= Math.pow(param_base,param_number)
     let output_json={
         "title":"AntiLogarithm",
         "language":"JavaScript",
         "question":"AntiLogarithm",
-        "params":[param_number],
+        "params":[param_number,param_base],
         "result":[Alog],
         "status":200}
     let output={"data":output_json,"status":200}
