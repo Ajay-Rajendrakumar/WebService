@@ -661,6 +661,425 @@ function rand(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+router.post('/variance', function(req, res) {
+    let param_list=req.body["Numberlist"]
+    if(validateVarianceNumber(param_list)){
+        let Numberlist = getNumberList(param_list)
+        let mean=0
+        let standard_deviation=0
+        let variance=0
+        let sum=0
+        n=Numberlist.length
+        for (var i = 0; i < n; i++){
+                sum = sum + Numberlist[i]
+        }
+        mean= sum/ n
+        for (var i = 0; i < n; i++){
+                standard_deviation =standard_deviation + Math.pow(Numberlist[i] - mean, 2)
+        }
+        variance = standard_deviation/ n
+        standard_deviation=Math.sqrt(variance)
+        let result=[]
+        result=[variance,standard_deviation]
+        let output_json={
+            "title":"Variance and Standard Deviation",
+            "language":"JavaScript",
+            "question":"Variance and Standard Deviation",
+            "params":[param_list],
+            "result":result,
+            "status":200}
+        let output={"data":output_json,"status":200}
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(output));
+    }else{
+        let result={"title":"Variance and Standard Deviation","language":"JavaScript","question":"Variance and Standard Deviation","params":[param_list],"error":"Invalid Characters","status":200}
+        let output={"data":result,"status":200};
+        res.json(output)
+    }
+
+});
+
+router.post('/linearRegression', function(req, res) {
+
+    let param_xList = req.body['xList']
+    let param_yList = req.body['yList']
+    
+    if(validateVarianceNumber(param_xList) && validateVarianceNumber(param_yList) && getNumberList(param_xList).length===getNumberList(param_yList).length){
+        let xList = getNumberList(param_xList)
+        let yList = getNumberList(param_yList)
+        let sum_xlist=0
+        let sum_ylist=0
+        let sum_xSquare=0
+        let sum_xy=0 
+        n=(xList).length
+        for (var i = 0; i < n; i++){
+            sum_xlist = sum_xlist + xList[i]
+            sum_ylist = sum_ylist + yList[i]
+            sum_xSquare = sum_xSquare + (xList[i]*xList[i])
+            sum_xy = sum_xy + (xList[i]*yList[i])
+        }
+        let slope = (n*sum_xy-sum_xlist*sum_ylist)/(n*sum_xSquare-sum_xlist*sum_xlist);
+        let intercept = (sum_ylist - slope*sum_xlist)/n
+        let equartion= "y = " + String(slope)+"x + "+ String(intercept)
+        let result=[]
+        result=[String(equartion)]
+        let output_json={
+            "title":"Linear Regression",
+            "language":"JavaScript",
+            "question":"Linear Regression",
+            "params":[param_xList,param_yList],
+            "result":result,
+            "status":200}
+        let output={"data":output_json,"status":200}
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(output));
+    }else{
+        let result={"title":"Linear Regression","language":"JavaScript","question":"Linear Regression","params":[param_xList,param_yList],"error":"Invalid Length","status":200}
+        let output={"data":result,"status":200};
+        res.json(output)
+    }
+
+});
+router.post('/CalculateLcmGcf', function(req, res) {
+
+    let param_list=req.body["Numberlist"]
+    if(validateVarianceNumber(param_list)){
+        let Numberlist = getNumberList(param_list)
+        hcf=calculateGCD(Numberlist)
+        lcm=calculateLCM(Numberlist)
+        let result=[]
+        result=[hcf,lcm]
+        let output_json={
+            "title":"GCF and LCM",
+            "language":"JavaScript",
+            "question":"GCF and LCM",
+            "params":[param_list],
+            "result":result,
+            "status":200}
+        let output={"data":output_json,"status":200}
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(output));
+    }else{
+        let result={"title":"GCF and LCM","language":"JavaScript","question":"GCF and LCM","params":[param_list],"error":"Invalid Characters","status":200}
+        let output={"data":result,"status":200};
+        res.json(output)
+    }
+
+});
+function calculateGCD(NList){
+    result = NList[0]
+    for(var i=0;i<NList.length;i++){
+        result = GCD(NList[i] , result) 
+        if(result == 1)
+           return 1 
+    }
+    return result 
+}
+function calculateLCM(NList){
+    result = NList[0]
+    for(var i=0;i<NList.length;i++){
+        result = (((NList[i] * result)) /  (GCD(NList[i], result)));
+    } 
+    return result
+}
+function GCD(a,b){
+    if (a == 0)
+        return b 
+    return GCD(b % a, a)
+} 
+
+function validateVarianceNumber(string){
+    for (var i = 0; i < string.length; i++){
+        if((string[i]==' ' || (string[i]>='0' && string[i]<='9'))){
+            continue
+        }else{
+            return false
+        }
+    }
+    return true
+}
+
+function getNumberList(given_set){
+    let split_value = []
+    tmp = ''
+    for (var i = 0; i < given_set.length; i++){
+        if(given_set.charAt(i)===" "){
+           split_value.push(toInteger(tmp))
+           tmp = ''
+        }
+        else{
+            tmp += given_set.charAt(i)
+        }
+    }
+    if(tmp != ' ' && tmp != '')
+        split_value.push(toInteger(tmp)) 
+    return split_value
+}
+
+router.post('/CalculateRoot', function(req, res) {
+    let param_number=req.body["number"]
+    let result=[]
+    result=[Sqrt(toInteger(param_number)),Cbrt(toInteger(param_number))]
+    let output_json={
+        "title":"Square and Cube root",
+        "language":"JavaScript",
+        "question":"Square and Cube root",
+        "params":[param_number],
+        "result":result,
+        "status":200}
+    let output={"data":output_json,"status":200}
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(output));
+}); 
+function Sqrt(number){
+    let temp=0
+    let sqrt=number/2
+    while(sqrt!=temp){
+        temp=sqrt
+        sqrt=(number/temp+temp)/2
+    }
+    return sqrt
+}
+function Cbrt(number){
+    start=0
+    last=number
+    precision=0.001
+    while(1){
+        mid = (start + last)/2; 
+        error = binaryDiff(number, mid); 
+        if (error <= precision)
+            return mid
+        if ((mid*mid*mid) > number) 
+            last = mid; 
+        else
+            start = mid;
+    } 
+    return sqrt
+}
+function binaryDiff(n,mid){
+    mid=mid*mid*mid
+    if(n>mid)
+        return (n-mid)
+    else
+        return (mid-n)
+}
+
+router.post('/nthRoot', function(req, res) {
+    let param_number=req.body["number"]
+    let param_place=req.body["place"]
+    let result=[]
+    result=[nthRoot(toInteger(param_number),toInteger(param_place))]
+    let output_json={
+        "title":"Nth root",
+        "language":"JavaScript",
+        "question":"Nth root",
+        "params":[param_number],
+        "result":result,
+        "status":200}
+    let output={"data":output_json,"status":200}
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(output));
+});
+
+function nthRoot(number,place){
+    let xPre = Math.random() % 10
+    let eps = 0.001
+    let delX = 2147483647
+    let xK=0.0
+    while (delX > eps){ 
+        xK = ((place - 1.0) * xPre +number/Math.pow(xPre, place-1)) /place
+        delX = Math.abs(xK - xPre) 
+        xPre = xK; 
+    }
+    return xK
+}
+
+router.post('/trignomentryFunction', function(req, res) {
+    let param_degree=(req.body["degree"])
+    let param_radian=(req.body["radian"])
+    let result=[]
+    let param=[]
+    if(param_degree.length>0){
+        param.push(param_degree)
+        param.push("-")
+        result=GenerateList(radian(parseFloat(param_degree)))
+    }else{
+        param.push("-")
+        param.push(param_radian)
+        result=GenerateList(parseFloat(param_radian))
+    }
+    let output_json={
+        "title":"trignomentry",
+        "language":"JavaScript",
+        "question":"trignomentry",
+        "params":param,
+        "result":result,
+        "status":200}
+    let output={"data":output_json,"status":200}
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(output));
+});
+function GenerateList(rad){
+    res=[]
+    res.push(Math.sin(rad))
+    res.push(Math.cos(rad))
+    res.push(Math.tan(rad))
+    res.push(Math.asin(rad))
+    res.push(Math.acos(rad))
+    res.push(Math.atan(rad))
+    return res
+}
+function radian(degree){
+    return degree*(Math.PI/180)
+}
+
+router.post('/CalculateLog', function(req, res) {
+    let param_number=parseFloat(req.body["number"])
+    
+    let Nlog=log(param_number)
+    let Log=log(param_number)/log(10)
+    let output_json={
+        "title":"Logarithm",
+        "language":"JavaScript",
+        "question":"Logarithm",
+        "params":[param_number],
+        "result":[Nlog,Log],
+        "status":200}
+    let output={"data":output_json,"status":200}
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(output));
+});
+
+function log(x){
+    let n = 1000.0
+    return n * ((x ** (1/n)) - 1)
+}
+router.post('/CalculateAntiLog', function(req, res) {
+    let param_number=parseFloat(req.body["number"])
+    
+    let Alog= Math.pow(10,param_number)
+    let output_json={
+        "title":"AntiLogarithm",
+        "language":"JavaScript",
+        "question":"AntiLogarithm",
+        "params":[param_number],
+        "result":[Alog],
+        "status":200}
+    let output={"data":output_json,"status":200}
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(output));
+});
+router.post('/electricConvertion', function(req, res) {
+   
+    let amp = (req.body['amp'])
+    let volt = (req.body['volt'])
+    let watt = (req.body['watt'])
+    let time = (req.body['time'])
+    let kva = (req.body['kva'])
+    let kw = (req.body['kw'])
+    let joule = (req.body['joule'])
+    let va = (req.body['va'])
+    let wh = (req.body['wh'])
+    let mah =(req.body['mah'])
+    let Ginput= [amp,volt,watt,time,kw,kva,va,joule,mah,wh]
+    for(var i=0;i<2;i++){
+    if(!volt)
+        volt=Cvolt(amp,watt,va,wh,mah,kva)
+    if(!watt)
+        watt=Cwatt(amp,volt,kw,wh,time,joule)
+    if(!amp)
+        amp=Camp(volt,watt,va,kva)
+    if(!kw)
+        kw=Ckw(watt)
+    if(!joule)
+        joule=Cjoule(time,watt)
+    if(!kva)
+        kva=Ckva(volt,amp)
+    if(!va)
+        va=Cva(volt,amp)
+    if(!wh)
+        wh=Cwh(watt,time,mah,volt)
+    if(!mah)
+        mah=CmAh(wh,volt)
+    if(!time)
+        time=Ctime(wh,watt,joule)
+    }
+    result=[amp,volt,watt,kw,kva,joule,va,mah,wh,time]
+    let output_json={
+        "title":"Electric Convertion",
+        "language":"JavaScript",
+        "question":"Electric Convertion",
+        "params":Ginput,
+        "result":result,
+        "status":200}
+    let output={"data":output_json,"status":200}
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(output));
+});
+function Cvolt(amp,watt,va,wh,mah,kva){
+    if(amp && watt)
+        return (parseFloat(watt)/parseFloat(amp))
+    if(va && amp)
+        return (parseFloat(va)/parseFloat(amp))
+    if(kva && amp)
+        return (parseFloat(kva)/(1000*parseFloat(amp)))
+    if(wh && mah)
+        return (parseFloat(wh)*1000)/parseFloat(mah)
+    return ""
+}
+function Cwatt(amp,volt,kw,wh,time,joule){
+    if(amp && volt)
+        return (parseFloat(amp)*parseFloat(volt))
+    if(kw)
+        return (parseFloat(kw)/1000)
+    if(wh && time)
+        return (parseFloat(wh)/parseFloat(time))
+    if(joule && time)
+        return (parseFloat(joule)/(parseFloat(time)*3600))
+    return ""
+}
+function Camp(volt,watt,va,kva){
+    if(watt && volt)
+        return (parseFloat(watt)/parseFloat(volt)) 
+    if(va && volt)
+        return (parseFloat(va)/parseFloat(volt))
+    if(kva && volt)
+        return (parseFloat(kva)/(1000*parseFloat(volt)))
+    return ""
+}
+function Ckw(watt){
+    if(watt)
+        return (parseFloat(watt)*1000) 
+    return ""
+}
+function Cjoule(time,watt){
+    if(watt && time)
+        return (parseFloat(watt)*(parseFloat(time)*3600))
+}
+function Cva(volt,amp){
+    if(volt && amp)
+        return(parseFloat(volt)*parseFloat(amp))
+}
+function Ckva(volt,amp){
+    if(volt && amp)
+        return (1000*(parseFloat(volt)*parseFloat(amp)))
+}
+function Cwh(watt,time,mAh,volt){
+    if(watt && time)
+        return (parseFloat(watt)*parseFloat(time))
+    if(mAh && volt)
+        return (parseFloat(mAh) * parseFloat(volt) / 1000)
+}
+function CmAh(wh,volt){
+    if(wh && volt)
+        return (1000 * parseFloat(wh) / parseFloat(volt)) 
+}
+function Ctime(wh,watt,joule){
+    if(wh && watt)
+        return (parseFloat(wh)/parseFloat(watt))
+    if(joule && watt)
+        return (parseFloat(joule)/(parseFloat(watt)*3600))
+}
 app.use('/node', router);
 
 app.listen(port);

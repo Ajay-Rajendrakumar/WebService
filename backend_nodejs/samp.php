@@ -1,62 +1,50 @@
-<?php
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: *");
-header('Content-type: application/json');
+amps=watts/volts         amps(watts,volts)
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  
- 	$param_message =  $_POST['message'];
-        $width  = 200;
-        $height = 30;
-        $im = imagecreatetruecolor($width, $height);
+watts=amps*volts         watts(amps,volts)
 
-        $white  = imagecolorallocate($im, 255, 255, 255);
-        $grey   = imagecolorallocate($im, 128, 128, 128);
-        $blue  = imagecolorallocate($im, 0, 0, 255);
-        $red  = imagecolorallocate($im, 0, 255, 0);
-        $green  = imagecolorallocate($im, 255, 0, 0);
-        $black  = imagecolorallocate($im, 0, 0, 0);
-        imagefilledrectangle($im, 0, 0, 399, 29, $white);
+volts=watt/amps          volts(wats,amps)
 
-        $color = array();
-        array_push($color, (($blue)));
-        array_push($color,  (($red)));
-        array_push($color, ($green));
+KW=(watts)1000           kw(watts)
 
-        $font = 'G:/xampp/htdocs/backend_php/gillsans.ttf';
-       
-        $x=10;
-        for($i=0;$i<strlen($param_message);$i++){
-                $size=rand(25,30);
-                $rotate=rand(-10,10);
-                 imagettftext($im, $size, $rotate, $x+($i*14), 20, $black, $font, $param_message[$i]);
-        }
-        imagepng($im,"captcha.png");
-        $path= 'G:/xampp/htdocs/backend_php/captcha.png';
+joules =watts×seconds (hr*3600)    joule(watts,time)
 
-        $list = array();
-        array_push($list, base64_encode(file_get_contents($path)));
-        imagedestroy($im);
-		
-        $Obj = new \stdClass();
-		$Obj->title = "Captcha";
-		$Obj->language = "PHP";
-		$Obj->result = $list;     
-		$params = array();
-		array_push($params, $param_message);
-		$Obj->params = $params;
-		$Obj->question = 10;
-		$Obj->status = 200;
-      	 $output = new \stdClass();
-		$output->data=(object)$Obj;
-		$output->status=200;
-        $JSON = json_encode($output);
-		echo $JSON;
+VA = volt*amps              VA(volt,amps)
+
+1000*VA = kVA               KVA(volts,amps)
+
+wH=watts*hour              wh(watt,hour)
+Wh = mAh × Volts / 1000    wh(mAh,volts)
+
+mAh= 1000 × Wh / Volts       mAh(wh,Volts)
 
 
-  
-}
+amps = watt/volt       
+amps = VA/volt
+amps= kva/(1000*v)
+
+watt=amps*volts
+watt = kw/1000
+watt= wh/hour
+watt = joules/seconds
+
+volt=watt/amp
+volt=VA/amps
+volt=(wh*1000)/mah
+volt= kva/(1000*amp)
+
+time= wh/watt
+time= jolues/watt*3600
+
+atleast 2 and TIme:
+Mah
+wh
+jolues
+
+amp,watt,volt,time,kw,joules,VA,wh,mah
+
+volt (watt,amp)(VA,amps)(wh,mah)(KAV,amp)    [amp,watt,va,wh,mah,kav]
+amp (watt,volt)(VA,volt)(KVA,volt)           [volt,watt,VA,KVA]
+watt(amp,volt)(kw)(wh,time)(joules,time)     [amp,volt,kw,wh,time,joules]
+time (wh,watt)(joule,watt)
 
 
-
-?>

@@ -8,7 +8,8 @@ import { createBrowserHistory } from 'history';
 import store from './store/store';
 import Layout from './layouts/index';
 
-import Question from './views/questions.js';
+import Ex1 from './views/excercise1.js';
+import Ex2 from './views/excercise2.js';
 
 const history = createBrowserHistory();
 
@@ -18,12 +19,21 @@ function App() {
         <Router history={history} exact path="/">
           <main className="h-100">
             <Switch>
+              <Route exact={true} path="/Ex1" render={() => (
+                <>
+                  <Layout page={"Service Oriented Architecture & WebServices"}/>
+                    <div className="main" >
+                      <Ex1 />
+                    </div>
+                </>
+              )}
+              />
               <Route exact={true} path="/" render={() => (
                 <>
                   <Layout page={"Service Oriented Architecture & WebServices"}/>
-                  <div className="main" >
-                    <Question />
-                  </div>
+                    <div className="main" >
+                      <Ex2 />
+                    </div>
                 </>
               )}
               />

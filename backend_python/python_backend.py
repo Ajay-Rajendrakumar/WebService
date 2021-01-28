@@ -507,7 +507,353 @@ def generateCaptcha():
     output={"data":output_json,"status":200}
     return jsonify(output)
  
+@app.route('/variance',methods = ['POST', 'GET'])
+@cross_origin()
+def variance():
+     if request.method == 'POST':
+        param_list = request.form['Numberlist']
+        if validateVarianceNumber(param_list):
+            Numberlist = getNumberList(param_list)
+            mean=0
+            standard_deviation=0
+            variance=0
+            sum=0
+            for i in Numberlist:
+                sum = sum+i
+            mean= sum/ len(Numberlist)
+            for i in Numberlist:
+                standard_deviation =standard_deviation + pow(i - mean, 2)
+            variance = standard_deviation/ len(Numberlist)
+            standard_deviation=math.sqrt(variance)
+            res=[variance,standard_deviation]
+            output_json={"title":"Variance & Standard Deviation","language":"Python","question":"Variance and Standard Deviation","params":[param_list],"result":res,"status":200}
+            output={"data":output_json,"status":200}
+            return jsonify(output)
+        else:
+            output_json={"title":"Variance & Standard Deviation","language":"Python","question":"Variance and Standard Deviation","params":[param_list],"error":"Invalid Characaters","status":200}
+            output={"data":output_json,"status":200}
+            return jsonify(output)
 
+@app.route('/linearRegression',methods = ['POST', 'GET'])
+@cross_origin()
+def linearRegression():
+     if request.method == 'POST':
+        param_xList = request.form['xList']
+        param_yList = request.form['yList']
+        if validateVarianceNumber(param_xList) and validateVarianceNumber(param_yList) and len(getNumberList(param_xList))==len(getNumberList(param_yList)):
+            xList = getNumberList(param_xList)
+            yList = getNumberList(param_yList)
+            sum_xlist=0
+            sum_ylist=0
+            sum_xSquare=0
+            sum_xy=0 
+            n=len(xList)
+            for i in range(n):
+                sum_xlist = sum_xlist + xList[i]
+                sum_ylist = sum_ylist + yList[i]
+                sum_xSquare = sum_xSquare + (xList[i]*xList[i])
+                sum_xy = sum_xy + (xList[i]*yList[i])
+            
+            slope = (n*sum_xy-sum_xlist*sum_ylist)/(n*sum_xSquare-sum_xlist*sum_xlist);
+            intercept = (sum_ylist - slope*sum_xlist)/n
+            equartion= "y = " + str(slope)+"x + "+ str(intercept)
+            res=[str(equartion)]
+            output_json={"title":"Linear Regression","language":"Python","question":"Linear Regression","params":[param_xList,param_yList],"result":res,"status":200}
+            output={"data":output_json,"status":200}
+            return jsonify(output)
+        else:
+            output_json={"title":"Linear Regression","language":"Python","question":"Linear Regression","params":[param_xList,param_yList],"error":"Invalid Length","status":200}
+            output={"data":output_json,"status":200}
+            return jsonify(output)
+
+
+
+@app.route('/CalculateLcmGcf',methods = ['POST', 'GET'])
+@cross_origin()
+def CalculateLcmGcf():
+     if request.method == 'POST':
+        param_list = request.form['Numberlist']
+        if validateVarianceNumber(param_list):
+            Numberlist = getNumberList(param_list)
+            hcf=calculateGCD(Numberlist)
+            lcm=calculateLCM(Numberlist)
+            res=[hcf,lcm]
+            output_json={"title":"GCF and LCM","language":"Python","question":"GCF and LCM","params":[param_list],"result":res,"status":200}
+            output={"data":output_json,"status":200}
+            return jsonify(output)
+        else:
+            output_json={"title":"GCF and LCM","language":"Python","question":"GCF and LCM","params":[param_list],"error":"Invalid Characters","status":200}
+            output={"data":output_json,"status":200}
+            return jsonify(output)
+
+def calculateGCD(NList):
+    result = NList[0]
+    for i in NList:
+        result = GCD(i, result) 
+        if(result == 1): 
+           return 1 
+    return result 
+
+def calculateLCM(NList):
+    result = NList[0]
+    for i in NList:
+        result = (((i * result)) /  (GCD(i, result))) 
+    return result
+
+
+def GCD(a,b):
+    if (a == 0):
+        return b 
+    return GCD(b % a, a) 
+
+
+def getNumberList(given_set):
+    split_value = []
+    tmp = ''
+    for c in given_set:
+        if c == ' ':
+            split_value.append(float(tmp))
+            tmp = ''
+        else:
+            tmp += c
+    if tmp != ' ':
+        split_value.append(float(tmp)) 
+    return split_value
+
+def validateVarianceNumber(given_set):
+    count=0
+    for c in given_set: 
+        if c==' ' or (c>='0' and c<='9'):
+            count=count+1
+    if count==length(given_set):
+        return True
+    else:
+        return False  
+
+@app.route('/CalculateRoot',methods = ['POST', 'GET'])
+@cross_origin()
+def CalculateRoot():
+     if request.method == 'POST':
+        param_number = int(request.form['number'])
+        res=[Sqrt(param_number),Cbrt(param_number)]
+        output_json={"title":"Square and Cube root","language":"Python","question":"Square and Cube root","params":[param_number],"result":res,"status":200}
+        output={"data":output_json,"status":200}
+        return jsonify(output)
+
+def Sqrt(number):
+    temp=0
+    sqrt=number/2
+    while(sqrt!=temp):
+        temp=sqrt
+        sqrt=(number/temp+temp)/2
+    return sqrt
+def Cbrt(number):
+    start=0
+    last=number
+    precision=0.001
+    while True:
+        mid = (start + last)/2; 
+        error = binaryDiff(number, mid); 
+        if (error <= precision):
+            return mid
+        if ((mid*mid*mid) > number): 
+            last = mid; 
+        else:
+            start = mid; 
+    return sqrt
+def binaryDiff(n,mid):
+    mid=mid*mid*mid
+    if(n>mid):
+        return (n-mid)
+    else:
+        return (mid-n)
+
+@app.route('/nthRoot',methods = ['POST', 'GET'])
+@cross_origin()
+def nthRoot():
+     if request.method == 'POST':
+        param_number = int(request.form['number'])
+        param_place = int(request.form['place'])
+        res=[nthRoot(param_number,param_place)]
+        output_json={"title":"Nth root","language":"Python","question":"Nth root","params":[param_number],"result":res,"status":200}
+        output={"data":output_json,"status":200}
+        return jsonify(output)
+
+def nthRoot(number,place):
+    xPre = random.randint(1,101) % 10
+    eps = 0.001
+    delX = 2147483647
+    xK=0.0
+    while (delX > eps): 
+        xK = ((place - 1.0) * xPre +number/pow(xPre, place-1)) /place
+        delX = abs(xK - xPre) 
+        xPre = xK; 
+    return xK
+
+@app.route('/trignomentryFunction',methods = ['POST', 'GET'])
+@cross_origin()
+def trignomentryFunction():
+     if request.method == 'POST':
+        param_degree = (request.form['degree'])
+        param_radian = (request.form['radian'])
+        res=[]
+        param=[]
+        if param_degree:
+            param.append(param_degree)
+            param.append('-')
+            res=GenerateList(radian(float(param_degree)),"Degree")
+        else:
+            param.append('-')
+            param.append(param_radian)
+            res=GenerateList(float(param_radian),"Radian")
+        output_json={"title":"trignomentry","language":"Python","question":"trignomentry","params":param,"result":res,"status":200}
+        output={"data":output_json,"status":200}
+        return jsonify(output)
+
+def GenerateList(rad,val):
+    res=[]
+    res.append(val)
+    res.append(math.sin(rad))
+    res.append(math.cos(rad))
+    res.append(math.tan(rad))
+    res.append(math.asin(rad))
+    res.append(math.acos(rad))
+    res.append(math.atan(rad))
+  
+    return res
+def radian(degree):
+    return degree*(math.pi/180)
+
+@app.route('/CalculateLog',methods = ['POST', 'GET'])
+@cross_origin()
+def CalculateLog():
+     if request.method == 'POST':
+        param_number = float(request.form['number'])
+        Log= log(param_number)/log(10)
+        naturalLog= log(param_number)
+        res=[naturalLog,Log]
+        output_json={"title":"Logarithm","language":"Python","question":"Logarithm","params":[param_number],"result":res,"status":200}
+        output={"data":output_json,"status":200}
+        return jsonify(output)
+
+def log(x):
+    n = 1000.0
+    return n * ((x ** (1/n)) - 1)
+
+@app.route('/CalculateAntiLog',methods = ['POST', 'GET'])
+@cross_origin()
+def CalculateAntiLog():
+     if request.method == 'POST':
+        param_number = float(request.form['number'])
+        #naturalLog= pow(2.718281828,param_number)
+        Log= pow(10,param_number)
+        res=[Log]
+        output_json={"title":"AntiLogarithm","language":"Python","question":"AntiLogarithm","params":[param_number],"result":res,"status":200}
+        output={"data":output_json,"status":200}
+        return jsonify(output)
+
+
+@app.route('/electricConvertion',methods = ['POST', 'GET'])
+@cross_origin()
+def electricConvertion():
+     if request.method == 'POST':
+        amp = (request.form['amp'])
+        volt = (request.form['volt'])
+        watt = (request.form['watt'])
+        time = (request.form['time'])
+        kva = (request.form['kva'])
+        kw = (request.form['kw'])
+        joule = (request.form['joule'])
+        va = (request.form['va'])
+        wh = (request.form['wh'])
+        mah =(request.form['mah'])
+        Ginput=[amp,volt,watt,time,kw,kva,va,joule,mah,wh]
+        for i in range(2):
+            if not volt:
+                volt=Cvolt(amp,watt,va,wh,mah,kva)
+            if not watt:
+                watt=Cwatt(amp,volt,kw,wh,time,joule)
+            if not amp:
+                amp=Camp(volt,watt,va,kva)
+            if not kw:
+                kw=Ckw(watt)
+            if not joule:
+                joule=Cjoule(time,watt)
+            if not kva:
+                kva=Ckva(volt,amp)
+            if not va:
+                va=Cva(volt,amp)
+            if not wh:
+                wh=Cwh(watt,time,mah,volt)
+            if not mah:
+                mah=CmAh(wh,volt)
+            if not time:
+                time=Ctime(wh,watt,joule)
+        res=[amp,volt,watt,kw,kva,joule,va,mah,wh,time]
+        output_json={"title":"Electric Convertion","language":"Python","question":"Electric Convertion","params":Ginput,"result":res,"status":200}
+        output={"data":output_json,"status":200}
+        return jsonify(output)
+
+def Cvolt(amp,watt,va,wh,mah,kva):
+    if(amp and watt):
+        return (float(watt)/float(amp))
+    if(va and amp):
+        return (float(va)/float(amp))
+    if(kva and amp):
+        return (float(kva)/(1000*float(amp)))
+    if(wh and mah):
+        return (float(wh)*1000)/float(mah)
+    return ""
+
+def Cwatt(amp,volt,kw,wh,time,joule):
+    if(amp and volt):
+        return (float(amp)*float(volt))
+    if(kw):
+        return (float(kw)/1000)
+    if(wh and time):
+        return (float(wh)/float(time))
+    if(joule and time):
+        return (float(joule)/(float(time)*3600))
+    return ""
+def Camp(volt,watt,va,kva):
+    if(watt and volt):
+        return (float(watt)/float(volt)) 
+    if(va and volt):
+        return (float(va)/float(volt))
+    if(kva and volt):
+        return (float(kva)/(1000*float(volt)))
+    return ""
+
+def Ckw(watt):
+    if watt:
+        return (float(watt)*1000) 
+    return ""
+def Cjoule(time,watt):
+    if watt and time:
+        return (float(watt)*(float(time)*3600))
+
+def Cva(volt,amp):
+    if volt and amp:
+        return(float(volt)*float(amp))
+
+def Ckva(volt,amp):
+    if volt and amp:
+        return (1000*(float(volt)*float(amp)))
+
+def Cwh(watt,time,mAh,volt):
+    if(watt and time):
+        return (float(watt)*float(time))
+    if(mAh and volt):
+        return (float(mAh) * float(volt) / 1000)
+def CmAh(wh,volt):
+    if wh and volt:
+        return (1000 * float(wh) / float(volt)) 
+
+def Ctime(wh,watt,joule):
+    if wh and watt:
+        return (float(wh)/float(watt))
+    if joule and watt:
+        return (float(joule)/(float(watt)*3600))
 
 if __name__ == '__main__':
     app.run()

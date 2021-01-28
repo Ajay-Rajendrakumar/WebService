@@ -9,7 +9,16 @@ let api={
   "4":"wordCurrencyConvertion",
   "5":"rsaEncrypt",
   "9":"generateOTP",
-  "10":"generateCaptcha"
+  "10":"generateCaptcha",
+  "Variance and Standard Deviation":"variance",
+  "Linear Regression":"linearRegression",
+  "GCF and LCM":"CalculateLcmGcf",
+  "Square and Cube root":"CalculateRoot",
+  "Nth root":"nthRoot",
+  "trignomentry":"trignomentryFunction",
+  "Logarithm":"CalculateLog",
+  "AntiLogarithm":"CalculateAntiLog",
+  "Electric Convertion":"electricConvertion"
 }
  
 
