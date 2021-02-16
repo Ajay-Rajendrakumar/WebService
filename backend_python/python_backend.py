@@ -978,9 +978,19 @@ def traverse(node, val=''):
 def huffman_technique():
      if request.method == 'POST':
         global global_node_res
-        h_char = (request.form['huffman_text']).split()
-        h_freq_str = (request.form['huffman_frequency']).split()
-        h_freq = [int(i) for i in h_freq_str] 
+        h_msg = (request.form['huffman_message'])
+        all_freq={}
+        for i in h_msg: 
+            if i in all_freq: 
+                all_freq[i] += 1
+            else: 
+                all_freq[i] = 1
+        h_char=[]
+        h_freq=[]
+        for x in all_freq:
+            h_char.append(x)
+            h_freq.append(all_freq[x])
+        print(h_char,h_freq)
         nodes = []
         for i in range(len(h_char)):
             nodes.append(node(h_freq[i], h_char[i]))
@@ -995,13 +1005,109 @@ def huffman_technique():
             nodes.remove(right)
             nodes.append(newNode)
         traverse(nodes[0])
-        Ginput=[str(h_char),str(h_freq)]
+        Ginput=[str(h_msg)]
         res=[global_node_res]
         global_node_res=[]
         output_json={"title":"huffman_technique","language":"Python","question":"huffman_technique","params":Ginput,"result":res,"status":200}
         output={"data":output_json,"status":200}
         return jsonify(output)
 
+
+@app.route('/run_length_algorithm',methods = ['POST', 'GET'])
+@cross_origin()
+def run_length_algorithm():
+     if request.method == 'POST':
+        msg = (request.form['message'])
+        Ginput=[msg]
+        res=[run_length_algorithm_encode(msg),run_length_algorithm_Decode(run_length_algorithm_encode(msg))]
+        output_json={"title":"run_length_algorithm","language":"Python","question":"run_length_algorithm","params":Ginput,"result":res,"status":200}
+        output={"data":output_json,"status":200}
+        return jsonify(output)
+
+def run_length_algorithm_encode(msg): 
+    encoded_msg = "" 
+    i = 0
+    while (i <= len(msg)-1): 
+        count = 1
+        ch = msg[i] 
+        j = i 
+        while (j < len(msg)-1): 
+            if (msg[j] == msg[j+1]): 
+                count = count+1
+                j = j+1
+            else: 
+                break
+        encoded_msg=encoded_msg+ch+str(count) 
+        i = j+1
+    return encoded_msg 
+
+def run_length_algorithm_Decode(msg): 
+    decoded_msg = ""
+    count='0'
+    last_char=''
+    for i in msg:
+        if(str.isdigit(i)):
+            count =count + i
+        else:
+            for j in range(int(count)):
+                decoded_msg=decoded_msg+last_char
+            last_char=i
+            count="0"
+    for j in range(int(count)):
+        decoded_msg=decoded_msg+last_char
+    return decoded_msg 
+
+@app.route('/Lempel_Ziv_Welch',methods = ['POST', 'GET'])
+@cross_origin()
+def Lempel_Ziv_Welch():
+     if request.method == 'POST':
+        msg = (request.form['message'])
+        Ginput=[msg]
+        cmped=LZW_compress(msg)
+        uncmped=LZW_decompress(cmped)
+        res=[(cmped),uncmped]
+        output_json={"title":"Lempel_Ziv_Welch","language":"Python","question":"Lempel_Ziv_Welch","params":Ginput,"result":res,"status":200}
+        output={"data":output_json,"status":200}
+        return jsonify(output)
+
+def LZW_compress(uncompressed):
+    dict_size = 256
+    dictionary = dict((chr(i), i) for i in range(dict_size))
+    w = ""
+    result = []
+    for c in uncompressed:
+        wc = w + c
+        if wc in dictionary:
+            w = wc
+        else:
+            result.append(dictionary[w])
+            dictionary[wc] = dict_size
+            dict_size += 1
+            w = c
+    if w:
+        result.append(dictionary[w])
+    return result
+ 
+ 
+def LZW_decompress(compressed):
+    from io import StringIO
+    dict_size = 256
+    dictionary = dict((i, chr(i)) for i in range(dict_size))
+    result = StringIO()
+    w = chr(compressed.pop(0))
+    result.write(w)
+    for k in compressed:
+        if k in dictionary:
+            entry = dictionary[k]
+        elif k == dict_size:
+            entry = w + w[0]
+        else:
+            raise ValueError('Bad compressed k: %s' % k)
+        result.write(entry)
+        dictionary[dict_size] = w + entry[0]
+        dict_size += 1
+        w = entry
+    return result.getvalue()
 
 if __name__ == '__main__':
     app.run()

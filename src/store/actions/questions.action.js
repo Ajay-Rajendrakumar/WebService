@@ -23,6 +23,8 @@ let api={
   "AntiLogarithm":"CalculateAntiLog",
   "Electric Convertion":"electricConvertion",
   "huffman_technique":"huffman_technique",
+  "run_length_algorithm":"run_length_algorithm",
+  "Lempel_Ziv_Welch":"Lempel_Ziv_Welch",
 }
  
 

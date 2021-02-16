@@ -15,16 +15,36 @@ import moment from 'moment';
 let questionList={
     "huffman_technique":{
         "question":"Implement Huffman Coding Techniques in Text Compression.",
-        "parameters":["huffman_text","huffman_frequency"],
+        "parameters":["huffman_message"],
         "description":"Huffman Lossless Data Compression",
-        "type":["text","text"],
-        "no_of_inputs":2,
-        "title":["Characters","Frequency"],
-        "result":["Tree"]
+        "type":["text"],
+        "no_of_inputs":1,
+        "title":["Message"],
+        "result":["Huffman Tree"]
+        },
+    "run_length_algorithm":{
+        "question":"Implement Run-length Coding Techniques in Text Compression",
+        "parameters":["message"],
+        "description":"Run-length Text Compression.",
+        "type":["text"],
+        "no_of_inputs":1,
+        "title":["Message"],
+        "result":["Compressed","DeCompressed"]
+        },
+    "Lempel_Ziv_Welch":{
+        "question":"Implement Lempel-Ziv-Welch (LZW) Coding Techniques in Text Compression",
+        "parameters":["message"],
+        "description":"Lempel-Ziv-Welch (LZW)  Text Compression.",
+        "type":["text"],
+        "no_of_inputs":1,
+        "title":["Message"],
+        "result":["Compressed","DeCompressed"]
         },
 }
 let parametersList={
-    "huffman_technique":["huffman_text","huffman_frequency"],
+    "huffman_technique":["huffman_message"],
+    "run_length_algorithm":["message"],
+    "Lempel_Ziv_Welch":["message"]
 }
 class Login extends Component {
     constructor(props) {
@@ -34,11 +54,11 @@ class Login extends Component {
             currentQuestion:{},
             backendList:["Python","JavaScript","PHP"],
             alphanumeric:["Number","Alphabet","AlphaNumeric"],
-            all_questions:["","huffman_technique"],
+            all_questions:["","huffman_technique","run_length_algorithm","Lempel_Ziv_Welch"],
             selectedBackend:"Python",
             formdata:{
-               huffman_text:"",
-               huffman_frequency:"",
+               huffman_message:"",
+               message:"",
             },
             validateMsg:"",
             result_data:[],
@@ -284,7 +304,7 @@ class Login extends Component {
                                <div className="h5 m-1">
                                    
                                    {
-                                    qNo===1?   
+                                    qNo===0?   
                                        <span>{"["+ formdata[key].split(' ').join(',') +"]"}</span>
                                  :
                                        <span>{formdata[key]}</span>
