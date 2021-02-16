@@ -5,7 +5,8 @@ header('Content-type: application/json');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   
- 	$currency = $_POST['currency'];
+    $currency = $_POST['currency'];
+ 	$param_type = $_POST['currency_type'];
 
     if(validateNumber($currency)){
         $words=["","","Hundred","Thousand","Lakh","Crore"];
@@ -23,13 +24,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $value=(int)($value/10);
             }
             $count=$count+1;
-            array_push($result, (currency_con((string)($r)) . " " . $words[$count]));
+            if(currency_con((string)($r))!="zero"){
+                array_push($result, (currency_con((string)($r)) . " " . $words[$count]));
+            }
         }
         $ans="";
         for($i = count($result)-1; $i >=0 ; $i--){
             $ans= $ans . " ". $result[$i] . " ";
         }
+        $symbol=getSymbol($param_type) . " ". $currency;
+        $ans=$ans . " " . $param_type ."s";
          $list = array();
+        array_push($list, ($symbol));
         array_push($list, ($ans));
     
 		$Obj = new \stdClass();
@@ -37,6 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$Obj->language = "PHP";
 		$Obj->result = $list;
 		$params = array();
+        array_push($params, $param_type);
 		array_push($params, $currency);
 		$Obj->params = $params;
 		$Obj->question = 4;
@@ -65,7 +72,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	}
   
 }
-
+function getSymbol($c_type){
+    if($c_type=="Dollar"){
+        return "$";
+    }
+    if($c_type=="Rupee"){
+        return "₹";
+    }
+    if($c_type=="Euro"){
+        return "€";
+    }
+    if($c_type=="Pound"){
+        return "£";
+    }
+}
 
 function currency_con($num){
     $ones_digit = ["zero","one","two","three","four","five","six","seven","eight","nine"];

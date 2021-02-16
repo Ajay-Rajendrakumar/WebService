@@ -24,6 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $union_var=$set_b;
         $minus_a=$set_a ;
         $minus_b=$set_b ;
+       
         for ($i = 0; $i < count($set_a); $i++){
             if(includes($set_a[$i],$set_b)!==-1){
                  array_push($intersection_var, $set_a[$i]);
@@ -32,6 +33,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                  array_push($union_var, $set_a[$i]);
             }
         }
+        $union_All=$union_var;
+        array_push($union_All,$intersection_var);
+
         for($i = 0; $i < count($intersection_var); $i++){
 
             if(includes($intersection_var[$i],$minus_a)!==-1){
@@ -44,6 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	
          $list = array();
         array_push($list, ($union_var));
+        array_push($list, ($union_All));
         array_push($list, ($intersection_var));
         if($swap===1){
             array_push($list, ($minus_b));

@@ -10,6 +10,7 @@ import Layout from './layouts/index';
 
 import Ex1 from './views/excercise1.js';
 import Ex2 from './views/excercise2.js';
+import Ex3 from './views/excercise3.js';
 
 const history = createBrowserHistory();
 
@@ -21,18 +22,27 @@ function App() {
             <Switch>
               <Route exact={true} path="/Ex1" render={() => (
                 <>
-                  <Layout page={"Service Oriented Architecture & WebServices"}/>
+                  <Layout page={"Service Oriented Architecture & WebServices (Excercise:1)"}/>
                     <div className="main" >
                       <Ex1 />
                     </div>
                 </>
               )}
               />
-              <Route exact={true} path="/" render={() => (
+              <Route exact={true} path="/Ex2" render={() => (
                 <>
-                  <Layout page={"Service Oriented Architecture & WebServices"}/>
+                  <Layout page={"Service Oriented Architecture & WebServices (Excercise:2)"}/>
                     <div className="main" >
                       <Ex2 />
+                    </div>
+                </>
+              )}
+              />
+              <Route exact={true} path="/" render={() => (
+                <>
+                  <Layout page={"Service Oriented Architecture & WebServices (Excercise:3)"}/>
+                    <div className="main" >
+                      <Ex3 />
                     </div>
                 </>
               )}

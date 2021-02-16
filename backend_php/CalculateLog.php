@@ -6,8 +6,9 @@ header('Content-type: application/json');
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   
     $param_number = (float)$_POST['number'];
+    $param_base = (float)$_POST['base'];
     $Nlog=CalcLog($param_number);
-    $Log=CalcLog($param_number)/CalcLog(10);
+    $Log=CalcLog($param_number)/CalcLog($param_base);
     
     $list = array();
     array_push($list,$Nlog );
@@ -19,6 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $Obj->result = $list;
     $params = array();
     array_push($params, $param_number);
+    array_push($params, $param_base);
     $Obj->params = $params;
     $Obj->question = "Logarithm";
     $Obj->status = 200;

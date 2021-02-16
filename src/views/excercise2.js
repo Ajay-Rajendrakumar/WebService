@@ -55,18 +55,18 @@ let questionList={
         "subQuestionList":{
             "Logarithm":{
                 "question":"Logarithm",
-                "type":["number"],
-                "parameters":["number"],
-                "no_of_inputs":1,
-                "title":["Logarithm"],
+                "type":["number","number"],
+                "parameters":["number","base"],
+                "no_of_inputs":2,
+                "title":["Logarithm","Base"],
                 "result":["Natural Logarithm(x)","Logarithm(x)"]
             },
             "AntiLogarithm":{
                 "question":"AntiLogarithm",
-                "type":["number"],
-                "parameters":["number"],
-                "no_of_inputs":1,
-                "title":["AntiLogarithm"],
+                "type":["number","number"],
+                "parameters":["number","base"],
+                "no_of_inputs":2,
+                "title":["AntiLogarithm","Base"],
                 "result":["AntiLogarithm(x)"]
             }
         }
@@ -113,7 +113,7 @@ let questionList={
                 "checkIndex":0,
                 "no_of_inputs":1,
                 "title":["Degree","Radian"],
-                "result":["Sin","Cos","Tan","Sec","Cosec","Cot"]
+                "result":["Sin","Cos","Tan","Cosec","Sec","Cot","ArcSine","ArcCos","ArcTan"]
         }
     }
     },
@@ -126,8 +126,8 @@ let parametersList={
     "Square and Cube root":["number"],
     "Nth root":["number","place"],
     "trignomentry":["degree","radian"],
-    "Logarithm":["number"],
-    "AntiLogarithm":["number"],
+    "Logarithm":["number","base"],
+    "AntiLogarithm":["number","base"],
     "Electric Convertion":["amp","volt","watt","time","kw","kva","va","joule","mah","wh"]
 }
 class Login extends Component {
@@ -158,7 +158,7 @@ class Login extends Component {
                "mah":"",
                "wh":"",
                "time":"",
-
+                "base":"",
             },
             validateMsg:"",
             result_data:[],

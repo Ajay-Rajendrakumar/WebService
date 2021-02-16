@@ -3,11 +3,19 @@ from flask_cors import CORS, cross_origin
 from flask import request
 from datetime import datetime
 from flask import jsonify
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont,ImageFilter
+import PIL.ImageDraw
+import PIL.Image
 import base64
 import random
 import os
 import math
+import pyqrcode 
+import png 
+from pyqrcode import QRCode
+from barcode import EAN13 
+from barcode.writer import ImageWriter 
+import hashlib 
 
 image_path = '../captcha/'
 app = Flask(__name__)
@@ -136,16 +144,20 @@ def setOperations():
                     intersection.append(number)
                 else:
                     union.append(number)
+                
             for no in intersection:
                 if no in set_a:
                     minus_a.remove(no)
                 if no in set_b:
                     minus_b.remove(no)
             res=[]
+            unionAll=[]
+            unionAll.append(union)
+            unionAll.append(intersection)
             if swap==1:
-                res=[union,intersection,minus_b,minus_a]
+                res=[union,unionAll,intersection,minus_b,minus_a]
             else:
-                res=[union,intersection,minus_a,minus_b]
+                res=[union,unionAll,intersection,minus_a,minus_b]
             output_json={"title":"Set Operations","language":"Python","question":2,"params":[getSet(param_set_a),getSet(param_set_b)],"result":res,"status":200}
             output={"data":output_json,"status":200}
             return jsonify(output)
@@ -294,6 +306,7 @@ def length(String):
 @cross_origin()
 def wordCurrencyConvertion():
     param_number = request.form['currency']
+    param_type = request.form['currency_type']
     currency = (param_number)
     if(validateNumber(param_number)):
         words=["","","Hundred","Thousand","Lakh","Crore"]
@@ -309,18 +322,31 @@ def wordCurrencyConvertion():
                 r=value % 10
                 value=int(value/10)
             count=count+1
-            result.append(currency_con(str(r)) + " " +words[count])
+            cur=currency_con(str(r))
+            if(cur!="zero"):
+                result.append( cur+ " " +words[count])
         ans=""
         for i in reversed(result):
             ans= ans + " "+ i + " "
-        res=[ans]
-        output_json={"title":"Word Convertion","language":"Python","question":4,"params":[currency],"result":res,"status":200}
+        symbol=getSymbol(param_type)+" "+currency
+        res=[symbol,ans+" " +param_type+"s"]
+        output_json={"title":"Word Convertion","language":"Python","question":4,"params":[param_type,currency],"result":res,"status":200}
         output={"data":output_json,"status":200}
         return jsonify(output)
     else:
-        output_json={"title":"Word Convertion","language":"Python","question":4,"params":[currency],"error":"Invalid Number","status":200}
+        output_json={"title":"Word Convertion","language":"Python","question":4,"params":[param_type,currency],"error":"Invalid Number","status":200}
         output={"data":output_json,"status":200}
         return jsonify(output)
+def getSymbol(c_type):
+    if(c_type=="Dollar"):
+        return "$"
+    elif(c_type=="Rupee"):
+        return "₹"
+    elif(c_type=="Euro"):
+        return "€"
+    elif(c_type=="Pound"):
+        return "£"
+    
 
 def currency_con(currency):
     currency_word=""
@@ -445,12 +471,17 @@ def gcd(x,y):
 @cross_origin()
 def generateOTP():
     param_otp = request.form['otpLength']
+    otp_type = request.form['alphanumeric']
+    alpha_numeric_char="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
     if(validate(param_otp)):
-        alpha_numeric_char="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
+        if(otp_type=="Number"):
+            alpha_numeric_char="1234567890"
+        elif(otp_type=="Alphabet"):
+            alpha_numeric_char="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
         otp=""
         key=unique_key()
         for i in range(int(param_otp)):
-            rand = getRand(0,60,key)
+            rand = getRand(0,len(alpha_numeric_char),key)
             print(rand,key,i)
             char=alpha_numeric_char[rand]
             otp=otp+char
@@ -486,9 +517,20 @@ def unique_key():
 def generateCaptcha():
     param_msg = request.form['message']
     img = Image.new('RGB', (200, 100), color = (255, 255, 255))
- 
     fnt = ImageFont.truetype('./gillsans.ttf', 32)
     d = ImageDraw.Draw(img)
+    R, G, B = random.randint(10,245), random.randint(10,245), random.randint(10,245),
+    cmin = random.randint(50, 70)
+    cmax = random.randint(90,120)
+    for _ in range(cmin,cmax):
+        r = R + random.randint(-10,10)
+        g = G + random.randint(-10,10)
+        b = B + random.randint(-10,10)
+        diam = random.randint(2,4)
+        x, y = random.randint(0,150), random.randint(0,50)
+        draw = PIL.ImageDraw.Draw(img)
+        draw.ellipse([x,y,x+diam,y+diam], fill=(r,g,b))
+    img.filter(ImageFilter.BoxBlur(10))
     x=10
     y=10
     for i in range(len(param_msg)):
@@ -507,6 +549,45 @@ def generateCaptcha():
     output={"data":output_json,"status":200}
     return jsonify(output)
  
+@app.route('/generateQrcode',methods = ['POST', 'GET'])
+@cross_origin()
+def generateQrcode():
+    param_msg = request.form['message']
+    url = pyqrcode.create(param_msg) 
+    url.png("QrCode.png", scale = 8) 
+    res=[]
+    with open("./QrCode.png", "rb") as image:
+        encoded_string = base64.b64encode(image.read())
+        res.append(encoded_string.decode("utf-8")) 
+    output_json={"title":"QR Code","language":"Python","question":8,"params":[param_msg],"result":res,"status":200}
+    output={"data":output_json,"status":200}
+    return jsonify(output)
+
+@app.route('/generateBarcode',methods = ['POST', 'GET'])
+@cross_origin()
+def generateBarcode():
+    param_msg = str(request.form['message'])
+    print(param_msg)
+    barCode = EAN13(param_msg, writer=ImageWriter()) 
+    barCode.save("BarCode")
+    res=[]
+    with open("./BarCode.png", "rb") as image:
+        encoded_string = base64.b64encode(image.read())
+        res.append(encoded_string.decode("utf-8")) 
+    output_json={"title":"Bar Code","language":"Python","question":7,"params":[param_msg],"result":res,"status":200}
+    output={"data":output_json,"status":200}
+    return jsonify(output)
+ 
+@app.route('/md5Algorithm',methods = ['POST', 'GET'])
+@cross_origin()
+def md5Algorithm():
+    param_msg = request.form['message']
+    hexa = hashlib.md5(param_msg.encode()) 
+    res=[hexa.hexdigest()]
+    output_json={"title":"md5 Algorithm","language":"Python","question":6,"params":[param_msg],"result":res,"status":200}
+    output={"data":output_json,"status":200}
+    return jsonify(output)
+
 @app.route('/variance',methods = ['POST', 'GET'])
 @cross_origin()
 def variance():
@@ -712,15 +793,32 @@ def trignomentryFunction():
 
 def GenerateList(rad,val):
     res=[]
-    res.append(val)
-    res.append(math.sin(rad))
-    res.append(math.cos(rad))
-    res.append(math.tan(rad))
-    res.append(math.asin(rad))
-    res.append(math.acos(rad))
-    res.append(math.atan(rad))
-  
+
+    for i in range(9):
+        res.append(Error(rad,i+1))
     return res
+def Error(rad,ind):
+    try:
+        if ind==1:
+            return math.sin(rad)
+        if ind==2:
+            return math.cos(rad)
+        if ind==3:
+            return math.tan(rad)
+        if ind==4:
+            return 1/math.sin(rad)
+        if ind==5:
+            return 1/math.cos(rad)
+        if ind==6:
+            return 1/math.tan(rad)
+        if ind==7:
+            return math.asin(rad)
+        if ind==8:
+            return math.acos(rad)
+        if ind==9:
+            return math.atan(rad)
+    except:
+        return "Not Defined"
 def radian(degree):
     return degree*(math.pi/180)
 
@@ -729,10 +827,11 @@ def radian(degree):
 def CalculateLog():
      if request.method == 'POST':
         param_number = float(request.form['number'])
-        Log= log(param_number)/log(10)
+        param_base = float(request.form['base'])
+        Log= log(param_number)/log(param_base)
         naturalLog= log(param_number)
         res=[naturalLog,Log]
-        output_json={"title":"Logarithm","language":"Python","question":"Logarithm","params":[param_number],"result":res,"status":200}
+        output_json={"title":"Logarithm","language":"Python","question":"Logarithm","params":[param_number,param_base],"result":res,"status":200}
         output={"data":output_json,"status":200}
         return jsonify(output)
 
@@ -745,10 +844,11 @@ def log(x):
 def CalculateAntiLog():
      if request.method == 'POST':
         param_number = float(request.form['number'])
+        param_base = float(request.form['base'])
         #naturalLog= pow(2.718281828,param_number)
-        Log= pow(10,param_number)
+        Log= pow(param_base,param_number)
         res=[Log]
-        output_json={"title":"AntiLogarithm","language":"Python","question":"AntiLogarithm","params":[param_number],"result":res,"status":200}
+        output_json={"title":"AntiLogarithm","language":"Python","question":"AntiLogarithm","params":[param_number,param_base],"result":res,"status":200}
         output={"data":output_json,"status":200}
         return jsonify(output)
 
@@ -854,6 +954,54 @@ def Ctime(wh,watt,joule):
         return (float(wh)/float(watt))
     if joule and watt:
         return (float(joule)/(float(watt)*3600))
+
+class node:
+    def __init__(self, freq, char, left=None, right=None):
+        self.freq = freq
+        self.char = char
+        self.left = left
+        self.right = right
+        self.huff = ''
+
+global_node_res=[]
+def traverse(node, val=''):
+    newVal = val + str(node.huff)
+    if(node.left):
+        traverse(node.left, newVal)
+    if(node.right):
+        traverse(node.right, newVal)
+    if(not node.left and not node.right):
+        global_node_res.append(node.char+"->"+newVal)
+
+@app.route('/huffman_technique',methods = ['POST', 'GET'])
+@cross_origin()
+def huffman_technique():
+     if request.method == 'POST':
+        global global_node_res
+        h_char = (request.form['huffman_text']).split()
+        h_freq_str = (request.form['huffman_frequency']).split()
+        h_freq = [int(i) for i in h_freq_str] 
+        nodes = []
+        for i in range(len(h_char)):
+            nodes.append(node(h_freq[i], h_char[i]))
+        while len(nodes) > 1:
+            nodes = sorted(nodes, key=lambda x: x.freq)
+            left = nodes[0]
+            right = nodes[1]
+            left.huff = 0
+            right.huff = 1
+            newNode = node(left.freq+right.freq, left.char+right.char, left, right)
+            nodes.remove(left)
+            nodes.remove(right)
+            nodes.append(newNode)
+        traverse(nodes[0])
+        Ginput=[str(h_char),str(h_freq)]
+        res=[global_node_res]
+        global_node_res=[]
+        output_json={"title":"huffman_technique","language":"Python","question":"huffman_technique","params":Ginput,"result":res,"status":200}
+        output={"data":output_json,"status":200}
+        return jsonify(output)
+
 
 if __name__ == '__main__':
     app.run()

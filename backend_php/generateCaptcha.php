@@ -7,7 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   
  	$param_message =  $_POST['message'];
         $width  = 200;
-        $height = 30;
+        $height = 40;
         $im = imagecreatetruecolor($width, $height);
 
         $white  = imagecolorallocate($im, 255, 255, 255);
@@ -24,12 +24,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         array_push($color, ($green));
 
         $font = 'G:/xampp/htdocs/backend_php/gillsans.ttf';
-       
-        $x=10;
+       $x = 150;
+        $y = 40;
+        $im = imagecreatetruecolor($x,$y);
+        for($i = 0; $i < $x; $i++) {
+            for($j = 0; $j < $y; $j++) {
+                $color = imagecolorallocate($im, rand(0,255), rand(0,255), rand(0,255));
+                imagesetpixel($im, $i, $j, $color);
+            }
+        }  
+        $x=20;
         for($i=0;$i<strlen($param_message);$i++){
                 $size=rand(25,30);
                 $rotate=rand(-10,10);
-                 imagettftext($im, $size, $rotate, $x+($i*17), 20, $black, $font, $param_message[$i]);
+                 imagettftext($im, $size, $rotate, $x+($i*17), 30, $black, $font, $param_message[$i]);
         }
         imagepng($im,"captcha.png");
         $path= 'G:/xampp/htdocs/backend_php/captcha.png';

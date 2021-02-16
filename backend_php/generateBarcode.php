@@ -9,29 +9,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
  	$param_message =  $_POST['message'];
       
         $path = 'G:/xampp/htdocs/backend_php/';
-        $file = $path."Qrcode.png"; 
-        $ecc = 'L'; 
-        $pixel_Size = 8; 
-        $frame_size = 10; 
-        QRcode::png($param_message, $file, $ecc, $pixel_Size, $frame_size); 
-        $path1= 'G:/xampp/htdocs/backend_php/Qrcode.png';
+        $file = $path."Barcode.png"; 
+          
+        // $ecc stores error correction capability('L') 
+        $generator = new BarcodeGenerator(EncodeTypes::CODE_128, $param_message); 
+    // set image resolution
+        $generator->getParameters()->setResolution(200);
+        // generate and save barcode
+        $generator->save($file);
+        $path1= 'G:/xampp/htdocs/backend_php/Barcode.png';
 
         $list = array();
         array_push($list, base64_encode(file_get_contents($path1)));
+
 		
         $Obj = new \stdClass();
-		$Obj->title = "QR Code Generation";
+		$Obj->title = "Bar Code Generation";
 		$Obj->language = "PHP";
 		$Obj->result = $list;     
 		$params = array();
 		array_push($params, $param_message);
 		$Obj->params = $params;
-		$Obj->question = 8;
+		$Obj->question = 7;
 		$Obj->status = 200;
       	 $output = new \stdClass();
 		$output->data=(object)$Obj;
 		$output->status=200;
         $JSON = json_encode($output);
-		echo $JSON; 
+		echo $JSON;
+
+
+  
 }
+
+
+
 ?>

@@ -6,6 +6,9 @@ var app = express();
 var cors = require('cors');
 let Jimp = require('jimp')
 var fs = require('fs');
+var QRCode  = require('qrcode');  
+const bwipjs = require('bwip-js');
+var md5 = require('md5');
 
 const { toInteger, toString, union, intersection, floor } = require('lodash');
 
@@ -161,6 +164,10 @@ router.post('/setOperations', function(req, res) {
                 union_var.push(set_a[i])
             }
         }
+        let unionAll=[]
+        unionAll.push(union_var)
+        unionAll.push(intersection_var)
+
         for(var i = 0; i < intersection_var.length; i++){
             let no=intersection_var[i]
             if(includes(no,set_a)!=-1){
@@ -172,9 +179,9 @@ router.post('/setOperations', function(req, res) {
         }
         let result=[]
         if(swap===1){
-            result=[union_var,intersection_var,minus_b,minus_a]
+            result=[union_var,unionAll,intersection_var,minus_b,minus_a]
         }else{
-            result=[union_var,intersection_var,minus_a,minus_b]
+            result=[union_var,unionAll,intersection_var,minus_a,minus_b]
         }
         let output_json={
             "title":"Set Operations",
@@ -376,6 +383,7 @@ function getMatrix(given_array,order){
 
 router.post('/wordCurrencyConvertion', function(req, res) {
     let currency=req.body["currency"]
+    let param_type=req.body["currency_type"]
     if(validateNumber(currency)){
         let words=["","","Hundred","Thousand","Lakh","Crore"]
         let limit = [2,2,1,2,2]
@@ -392,32 +400,43 @@ router.post('/wordCurrencyConvertion', function(req, res) {
                 value=toInteger(value/10)
             }
             count=count+1
-
-            result.push(currency_con(String(r)) + " " +words[count])
+            if(currency_con(String(r))!="zero")
+                result.push(currency_con(String(r)) + " " +words[count])
         }
         let ans=""
         result.reverse()
         for (var i = 0; i < result.length; i++){
             ans= ans + " "+ result[i] + " "
         }
+        let symbol=getSymbol(param_type)+" "+currency
+        ans=ans+" " +param_type+"s"
         let output_json={
             "title":"Word Convertion",
             "language":"JavaScript",
             "question":4,
-            "params":[currency],
-            "result":[ans],
+            "params":[param_type,currency],
+            "result":[symbol,ans],
             "status":200}
         let output={"data":output_json,"status":200}
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify(output));
     }else{
-        let result={"title":"Word Convertion","language":"JavaScript","question":4,"params":[currency],"error":"Invalid Number","status":200}
+        let result={"title":"Word Convertion","language":"JavaScript","question":4,"params":[param_type,currency],"error":"Invalid Number","status":200}
         let output={"data":result,"status":200};
         res.json(output)
     }
 
 });
-
+function getSymbol(c_type){
+    if(c_type=="Dollar")
+        return "$"
+    if(c_type=="Rupee")
+        return "₹"
+    if(c_type=="Euro")
+        return "€"
+    if(c_type=="Pound")
+        return "£"
+}
 function validateNumber(string){
     if(string.length>9){
         return False
@@ -566,13 +585,18 @@ function get_gcd(x,y){
 
 router.post('/generateOTP', function(req, res) {
     let otp_len=req.body["otpLength"]
+    let otp_type = req.body['alphanumeric']
+    let alpha_numeric_char="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
     if(validateOTPNumber(otp_len)){
-       
-        let alpha_numeric_char="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
+        if(otp_type=="Number"){
+            alpha_numeric_char="1234567890"
+        }else if(otp_type=="Alphabet"){
+            alpha_numeric_char="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+        }
         let otp=""
         let key=unique_key()
         for (var i = 0; i < toInteger(otp_len); i++){
-            let rand = getRand(0,60,key)
+            let rand = getRand(0,alpha_numeric_char.length,key)
             let char=alpha_numeric_char[rand]
             otp=otp+char
             key= (key + (unique_key()/(2*(i+1))))/2
@@ -631,6 +655,8 @@ router.post('/generateCaptcha', function(req, res) {
                         y=y-(rand(0,4) *2)
                     }
             }
+            image.posterize(20);
+            image.blur(1);  
             image.rotate(rand(-10,10)); 
             return image
         }).then(image => {
@@ -652,6 +678,54 @@ router.post('/generateCaptcha', function(req, res) {
    
 
 });
+
+router.post('/generateQrcode', function(req, res) {  
+    let msg=req.body["message"]
+    let imgBase64Data=[]
+    QRCode.toDataURL(msg, function (err, code) { 
+            console.log(code)
+            let output_json={
+                "title":"QR Code",
+                "language":"JavaScript",
+                "question":8,
+                "params":[msg],
+                "result":[code.split(';base64,')[1]],
+                "status":200}
+                let output={"data":output_json,"status":200}
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify(output));
+    })
+    
+    
+  });
+
+  router.post('/generateBarcode', function(req, res) {  
+    let msg=req.body["message"]
+    bwipjs.toBuffer({
+        bcid:        'code128',       
+        text:        msg,    
+        scale:       3,               
+        height:      10,            
+        includetext: true,         
+        textxalign:  'center',       
+    })
+    .then(png => {
+        let output_json={
+            "title":"Bar Code",
+            "language":"JavaScript",
+            "question":7,
+            "params":[msg],
+            "result":[png.toString('base64')],
+            "status":200}
+            let output={"data":output_json,"status":200}
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(output));
+    })
+    .catch(err => {
+        // `err` may be a string or Error object
+    });
+    
+});
 function base64_encode(file) {
     var bitmap = fs.readFileSync(file);
     return new Buffer(bitmap).toString('base64');
@@ -660,6 +734,20 @@ function base64_encode(file) {
 function rand(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+router.post('/md5Algorithm', function(req, res) {  
+    let msg=req.body["message"]
+    let output_json={
+        "title":"md5 Algorithm",
+        "language":"JavaScript",
+        "question":6,
+        "params":[msg],
+        "result":[md5(msg)],
+        "status":200}
+        let output={"data":output_json,"status":200}
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(output));
+    
+  });
 
 router.post('/variance', function(req, res) {
     let param_list=req.body["Numberlist"]

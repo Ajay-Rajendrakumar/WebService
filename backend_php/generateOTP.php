@@ -5,14 +5,19 @@ header('Content-type: application/json');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   
- 	$otp_len = $_POST['otpLength'];
-   
+    $otp_len = $_POST['otpLength'];
+ 	$otp_type = $_POST['alphanumeric'];
+    $alpha_numeric_char="ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz";  
     if(validateNumber($otp_len)){
-        $alpha_numeric_char="ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz";
+        if($otp_type=="Number"){
+            $alpha_numeric_char="1234567890";
+        }else if($otp_type=="Alphabet"){
+            $alpha_numeric_char="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        }
         $otp="";
         $key=unique_key();
         for ($i = 0; $i < (int)($otp_len); $i++){
-            $rand = getRand(0,60,$key);
+            $rand = getRand(0,strlen($alpha_numeric_char),$key);
             $char=$alpha_numeric_char[$rand];
             $otp=$otp . $char;
             $key= ($key + (unique_key()/(2*($i+1))))/2;

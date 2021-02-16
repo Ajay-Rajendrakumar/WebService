@@ -13,112 +13,18 @@ import _, { matches, toInteger } from 'lodash';
 import moment from 'moment';
 
 let questionList={
-    "1":{
-        "question":"Calculate the difference between two dates",
-        "parameters":["day","month","year","hour","minute","second"],
-        "description":"To calculate the actual diffence between two give Dates.",
-        "type":["datetime-local","datetime-local"],
-        "no_of_inputs":2,
-        "date":true,
-        "title":["Date 1","Date 2"],
-        "result":["Number of Days","Number of Months","Number of Years","Number of Hours","Number of Minutes","Number of Seconds"]
-
-        },
-    "2":{
-        "question":"Perform Set theory operations such as Union, Minus, Intersection for the group of data",
-        "parameters":["set_a","set_b"],
-        "description":"To perform set theory operations on give 2 sets.",
+    "huffman_technique":{
+        "question":"Implement Huffman Coding Techniques in Text Compression.",
+        "parameters":["huffman_text","huffman_frequency"],
+        "description":"Huffman Lossless Data Compression",
         "type":["text","text"],
         "no_of_inputs":2,
-        "title":["Set 1","Set 2"],
-        "result":["Union","Union All","Intersection","Minus(A-B)","Minus(B-A)"]
+        "title":["Characters","Frequency"],
+        "result":["Tree"]
         },
-    "3":{
-        "question":"Perform matrix operations like Transpose, Lower Diagonal (Left & Right), Upper Diagonal (Left & Right) and Swivel",
-        "parameters":["order","matrix_a"],
-        "description":"To matrix operations like Transpose, Lower Diagonal (Left & Right), Upper Diagonal (Left & Right) and Swivel on give matrix",
-        "type":["number","text"],
-        "no_of_inputs":2,
-        "title":["Order","Matrix"],
-        "result":["Transpose","Left Lower Diagonal","Right Lower Diagonal","Left Upper Diagonal","Rigth Upper Diagonal","Swivel Matrix"]
-
-        },
-    "4":{
-        "question":"Convert the figure into words in currency",
-        "parameters":["currency_type","currency"],
-        "description":"To Convert the figure into words in currency",
-        "type":["select","number"],
-        "no_of_inputs":2,
-        "title":["Currency Type","Currency"],
-        "result":["Currency","Currency in Words"]
-        
-        },
-    "5":{
-        "question":"Implement the RSA algorithm for encryption and decryption",
-        "parameters":["message"],
-        "description":"To Implement the RSA algorithm for encryption and decryption",
-        "type":["text"],
-        "no_of_inputs":1,
-        "title":["RSA ALgorithm"],
-        "result":["Encrpted Message","Original Message"]
-    },
-    "6":{
-        "question":"Generate the checksum value for the given sentence using md5 algorithm",
-        "parameters":["message"],
-        "description":"To generate the checksum value for the given sentence using md5 algorithm.",
-        "type":["text"],
-        "no_of_inputs":1,
-        "title":["md5 Algorithm"],
-        "result":["HexaDecimal Equivalent"]
-    },
-    "7":{
-        "question":"Generate 128-bit bar code for numeric data",
-        "parameters":["message"],
-        "description":"To generate Barcode for given message",
-        "type":["number"],
-        "no_of_inputs":1,
-        "title":["Bar Code Generation"],
-        "result":["Bar Code"]
-    },
-    "8":{
-        "question":"Generate QR code for alphanumeric data",
-        "parameters":["message"],
-        "description":"To generate Qr Code for given message",
-        "type":["text"],
-        "no_of_inputs":1,
-        "title":["QR Code Generation"],
-        "result":["QR Code"]
-    },
-    "9":{
-        "question":"Generate a one-time password (OTP) in numbers, alphabet and alphanumeric",
-        "parameters":["otpLength","alphanumeric"],
-        "description":"To Generate a one-time password (OTP) in numbers, alphabet and alphanumeric",
-        "type":["number","select"],
-        "no_of_inputs":2,
-        "title":["OTP Generation","OTP Type"],
-        "result":["OTP"]
-    },
-    "10":{
-        "question":"Generate a Completely Automated Public Turing test to tell Computers and Humans Apart (CAPTCHA) for the given string",
-        "parameters":["message"],
-        "description":"To Generate a Completely Automated Public Turing test to tell Computers and Humans Apart (CAPTCHA) for the given string",
-        "type":["text"],
-        "no_of_inputs":1,
-        "title":["Captcha Generation"],
-        "result":["Captcha"]
-    },
 }
 let parametersList={
-    "1":["date_1","date_2"],
-    "2":["set_a","set_b"],
-    "3":["order","matrix_a"],
-    "4":["currency_type","currency"],
-    "5":["message"],
-    "6":["message"],
-    "7":["message"],
-    "8":["message"],
-    "9":["otpLength","alphanumeric"],
-    "10":["message"],
+    "huffman_technique":["huffman_text","huffman_frequency"],
 }
 class Login extends Component {
     constructor(props) {
@@ -127,30 +33,12 @@ class Login extends Component {
             qNo:1,
             currentQuestion:{},
             backendList:["Python","JavaScript","PHP"],
-            currency_type:["Rupee","Dollar","Euro","Pound"],
             alphanumeric:["Number","Alphabet","AlphaNumeric"],
+            all_questions:["","huffman_technique"],
             selectedBackend:"Python",
             formdata:{
-                "day_1":0,
-                "month_1":0,
-                "year_1":0,
-                "hour_1":0,
-                "minute_1":0,
-                "second_1":0,         
-                "day_2":0,
-                "month_2":0,
-                "year_2":0,
-                "hour_2":0,
-                "minute_2":0,
-                "second_2":0,
-                "set_a":"",
-                "set_b":"",
-                "order":0,
-                "matrix":"",
-                "currency_amount":0,
-                "message":"",
-                "currency_type":"Rupee",
-                "alphanumeric":"AlphaNumeric"
+               huffman_text:"",
+               huffman_frequency:"",
             },
             validateMsg:"",
             result_data:[],
@@ -162,15 +50,17 @@ class Login extends Component {
     }
     handleSubmit = (e) => {
         e.preventDefault();
-        let { formdata,qNo,selectedBackend } = { ...this.state }
+        let { formdata,qNo,selectedBackend,all_questions } = { ...this.state }
         if(this.validateState()){ 
 
         let fd = new FormData()
         fd=this.setParameters(qNo)
-        this.props.distributer(fd,qNo,selectedBackend).then(response => {
+        this.props.distributer(fd,all_questions[qNo],selectedBackend).then(response => {
             console.log("her",response,response['data'].status)
             if(response['data'].status===200){
-              let data=response['data']    
+                
+              let data=response['data']
+              console.log("here",data)    
               let question = data['question']
               let result= data['result']              
               let params = questionList[question]['result']
@@ -194,8 +84,8 @@ class Login extends Component {
                   error:error,
               }
               let {result_data}={...this.state}
-              result_data.push(obj)
               console.log(obj)
+              result_data.push(obj)
               this.setState({result_data})
               this.questionLoader(qNo)
             }else{
@@ -203,23 +93,18 @@ class Login extends Component {
               this.toasterHandler("error", "Cant reach the server")
             }
           }).catch((err)=>{
-            this.toasterHandler("error", "Cant reach the server")
+            this.toasterHandler("error", err)
           })
         }
     }
 
     setParameters(qNo){
-        let { formdata } = { ...this.state }
+        let { formdata,all_questions } = { ...this.state }
         let fd = new FormData()
-        let params=parametersList[qNo]
-        if(qNo===1){
-            fd.append("date_1",formdata['day_1']+"/"+formdata['month_1']+"/"+formdata['year_1']+"/"+formdata['hour_1']+"/"+formdata['minute_1']+"/"+formdata['second_1']+"/")
-            fd.append("date_2",formdata['day_2']+"/"+formdata['month_2']+"/"+formdata['year_2']+"/"+formdata['hour_2']+"/"+formdata['minute_2']+"/"+formdata['second_2']+"/")
-        }else{
+        let params=parametersList[all_questions[qNo]]
             params.map((key,id)=>{
                 fd.append(key,formdata[key])
             })
-        }
         return fd
     }
   
@@ -233,9 +118,9 @@ class Login extends Component {
     }
 
     questionLoader=(qNo)=>{
-        let { currentQuestion,result_collection,result_data } = { ...this.state }
-        currentQuestion=questionList[qNo]
-        result_collection=_.reverse(_.filter(result_data,{ 'question':qNo}));
+        let { all_questions,currentQuestion,result_collection,result_data } = { ...this.state }
+        currentQuestion=questionList[all_questions[qNo]]
+        result_collection=_.reverse(_.filter(result_data,{ 'question':all_questions[qNo]}));
         this.setState({currentQuestion,result_collection})
 
     }
@@ -261,12 +146,14 @@ class Login extends Component {
     }
 
     getName=(name)=>{
+            console.log(name)
+            if(name){
             name = name.replace("_", " ")
             name = _.startCase(name);
+            }
             return name
     }
     handleChange=(e)=>{
-        console.log(e.target.name,e.target.value)
         let { formdata } = { ...this.state }
         formdata[e.target.name] = e.target.value       
         this.setState({ formdata })
@@ -274,17 +161,9 @@ class Login extends Component {
     validateState(){
         let {formdata ,qNo,validateMsg}={...this.state}
         let flag = 0
-        if(qNo===1){
-            let date1=this.dateValidation(formdata["day_1"],formdata["month_1"],formdata["year_1"],formdata["hour_1"],formdata["minute_1"],formdata["second_1"])
-            let date2=this.dateValidation(formdata["day_2"],formdata["month_2"],formdata["year_2"],formdata["hour_2"],formdata["minute_2"],formdata["second_2"])
-            if(date1 && date2){
-                return true
-            }else{
-                validateMsg="Invalid Date"
-            }
-        }else{
+    
             return true
-        }
+        
         
         this.setState({validateMsg},()=>{
             this.toasterHandler("error", validateMsg)
@@ -293,73 +172,9 @@ class Login extends Component {
         
     }
 
-    dateValidation(day,month,year,hour,minute,second){
-
-            if(day!="" && month!="" && year!="" && minute!="" && second!="" && hour>=0 && hour<24 && minute>=0 && minute<=60 && second>=0 && second<=60 && day>=1 && day<=31 && month>=1 && month<=12 && year>=1){
-                return true
-            }
-            return false
-    }
-
-    printSet=(set)=>{
-        let res="[ "
-        set.map((val,ind)=>{
-            if(ind!=0)
-                res=res+","+val
-            else    
-                res=res+val
-        })
-        res=res+" ]"
-        return res
-    }
-    printMatrix=(value,ind)=>{
-        let {formdata}={...this.state}
-        if(value){
-            if(ind==0){
-                    return (value+ " * "+value)
-            }else{
-                let array=value.split(/\s+/);
-                let order=formdata['order']
-                if(order>1){
-                    let count=0;
-                    let matrix=[]
-                    let temp=[]
-                    if(array.length>=(order*order))
-                        array.splice(order*order+1,array.length)
-                    array.map((val,ind)=>{
-                        
-                        if(count === (toInteger(order))){
-                            matrix.push(temp)
-                            temp=[]
-                            temp.push(val)
-                            count=1
-                        }else{
-                            temp.push(val)
-                            count=count+1
-                        }
-                    })
-                    return this.matrixGen(matrix)
-                }else{
-                    this.toasterHandler('error',"Enter valid Order")
-                }
-            }
-        }
-    }
-    matrixGen=(matrix)=>{
-        return (
-            <div className="m-1">
-              {matrix.map((row, i) => (
-                <div key={i}>
-                  {row.map((col, j) => (
-                    <span className="m-1" key={j}>{col}</span>
-                  ))}
-                </div>
-              ))}
-            </div>
-          );
-    }
+   
     render() {
-        let {qNo,currentQuestion,backendList,formdata,result_collection}={...this.state}
+        let {qNo,currentQuestion,backendList,formdata,result_collection,all_questions}={...this.state}
         return (
              <div className="main-container">
                <div className="question-container shadow-lg p-3 mb-5 bg-white rounded">
@@ -463,32 +278,15 @@ class Login extends Component {
                            <span className="text-dark  h6">Given Input:</span>
                            <br></br>
                            {
-                               qNo===1?
-                               <div className="m-1">
-                               {[...Array(2)].map((item,ind)=>
-                                  <div className="mt-4">
-                                      <span className="text-primary h5 font-weight-bold">{"Date " + (ind+1)}</span><br></br>
-                                      <div className="h5 m-1">
-                                          {formdata["day_"+(ind+1)]+"/"+formdata["month_"+(ind+1)]+"/"+formdata["year_"+(ind+1)]+"  -  "+formdata["hour_"+(ind+1)]+":"+formdata["minute_"+(ind+1)]+":"+formdata["second_"+(ind+1)]}
-                                      </div>
-                                  </div>
-                               )}
-                            </div>
-                        :
-                               questionList && questionList[qNo]["parameters"].map((key,ind)=>      
+                               questionList && questionList[all_questions[qNo]]["parameters"].map((key,ind)=>      
                                <div className="mt-4">
                                <span className="text-primary h5 font-weight-bold">{this.getName(key)}</span><br></br>
                                <div className="h5 m-1">
                                    
                                    {
-                                    qNo===2?   
+                                    qNo===1?   
                                        <span>{"["+ formdata[key].split(' ').join(',') +"]"}</span>
-                                       :
-                                    qNo===3?
-                                   
-                                        this.printMatrix(formdata[key],ind)
-                                        :
-
+                                 :
                                        <span>{formdata[key]}</span>
                                    }
                                 </div>
@@ -530,11 +328,10 @@ class Login extends Component {
                                     <ul className="bl-list"> 
                                     {
                                         key['params'].map((que,ind)=>
-                                        <li key={ind}><span className="font-weight-bold">{this.getName(parametersList[key['question']][ind]) +' : '}</span>
+                                        <li key={ind}><span className="font-weight-bold">{
+                                        this.getName(parametersList[key['question']][ind]) +' : '}</span>
                                       
-                                            {key['question']===2?
-                                                    this.printSet(que)
-                                                :
+                                            {
                                                     que
                                             }
                                         
@@ -552,17 +349,14 @@ class Login extends Component {
                                             Object.keys(key['result']).map((ans,ind)=>
                                             <li key={ind}><span className="font-weight-bold">{ans+" : "}</span>
                                                 {
-                                                    key['question']==2?
-                                                        this.printSet(key['result'][ans])
-                                                    :
-                                                    key['question']==3?
-                                                        this.matrixGen(key['result'][ans])
-                                                    :
-
-                                                     key['question']==10 || key['question']==8 || key['question']==7?
-                                                        <div>
-                                                            <img src={`data:image/jpeg;base64,${key['result'][ans]}`} />
-                                                        </div>
+                                                    key['question']==="huffman_technique"?
+                                                    
+                                                    <ul className="bl-list">   
+                                                    {key['result'][ans].map((val,ind)=>
+                                                    <li key={ind}>{val}</li>
+                                                    )}
+                                                    </ul>
+                                                    
                                                     :
                                                     key['result'][ans]}</li>
                                             )

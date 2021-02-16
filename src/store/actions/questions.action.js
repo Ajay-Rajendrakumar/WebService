@@ -8,6 +8,9 @@ let api={
   "3":"matrixOperation",
   "4":"wordCurrencyConvertion",
   "5":"rsaEncrypt",
+  "6":"md5Algorithm",
+  "7":"generateBarcode",
+  "8":"generateQrcode",
   "9":"generateOTP",
   "10":"generateCaptcha",
   "Variance and Standard Deviation":"variance",
@@ -18,7 +21,8 @@ let api={
   "trignomentry":"trignomentryFunction",
   "Logarithm":"CalculateLog",
   "AntiLogarithm":"CalculateAntiLog",
-  "Electric Convertion":"electricConvertion"
+  "Electric Convertion":"electricConvertion",
+  "huffman_technique":"huffman_technique",
 }
  
 

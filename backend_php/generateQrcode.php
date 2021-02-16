@@ -11,8 +11,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $path = 'G:/xampp/htdocs/backend_php/';
         $file = $path."Qrcode.png"; 
         $ecc = 'L'; 
-        $pixel_Size = 8; 
-        $frame_size = 10; 
+        $pixel_Size = 7; 
+        $frame_size = 8;
         QRcode::png($param_message, $file, $ecc, $pixel_Size, $frame_size); 
         $path1= 'G:/xampp/htdocs/backend_php/Qrcode.png';
 
@@ -32,6 +32,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$output->data=(object)$Obj;
 		$output->status=200;
         $JSON = json_encode($output);
-		echo $JSON; 
+		echo $JSON;
+
+
+  
 }
+
+
+
 ?>

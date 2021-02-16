@@ -34,15 +34,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo $JSON;
 }
 
+
 function GenerateList($rad){
-    $res= array();
-    array_push($res, sin($rad));
-    array_push($res, cos($rad));
-    array_push($res, tan($rad));
-    array_push($res, asin($rad));
-    array_push($res, acos($rad));
-    array_push($res, atan($rad)); 
+    $res=array();
+    for($i=1;$i<=9;$i++){
+        array_push($res,Error($rad,$i));
+    }
     return $res;
+}
+function Error($rad,$i){
+    try{
+        switch($i) {
+            case 1:
+                return sin($rad);
+            case 2:
+                return cos($rad);
+            case 3:
+                return tan($rad);
+            case 4:
+                {
+                    if(sin($rad)!=0){
+                        return 1/sin($rad);
+                    }else{
+                        return "Not Defined";
+                    }
+                }
+            case 5:
+                {
+                    if(cos($rad)!=0){
+                        return 1/cos($rad);
+                    }else{
+                        return "Not Defined";
+                    }
+                }
+                
+            case 6:
+                {
+                    if(tan($rad)!=0){
+                        return 1/tan($rad);
+                    }else{
+                        return "Not Defined";
+                    }
+                }
+                
+            case 7:
+                return asin($rad);
+            case 8:
+                return acos($rad);
+            case 9:
+                return atan($rad);
+        }
+      }catch(Exception  $err) {
+        return ("Not Defined");
+      }
 }
 function radian($degree){
     return $degree*(pi()/180);
