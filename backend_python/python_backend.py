@@ -16,7 +16,9 @@ from pyqrcode import QRCode
 from barcode import EAN13 
 from barcode.writer import ImageWriter 
 import hashlib 
-
+import bz2
+import lzma 
+import deflate
 image_path = '../captcha/'
 app = Flask(__name__)
 cors = CORS(app)
@@ -488,7 +490,7 @@ def generateOTP():
             key= (key + (unique_key()/(2*(i+1))))/2
                         
         res=[otp]
-        output_json={"title":"Captcha Generation ","language":"Python","question":9,"params":[param_otp],"result":res,"status":200}
+        output_json={"title":"otp Generation ","language":"Python","question":9,"params":[param_otp],"result":res,"status":200}
         output={"data":output_json,"status":200}
         return jsonify(output)
     else:
@@ -1057,57 +1059,7 @@ def run_length_algorithm_Decode(msg):
         decoded_msg=decoded_msg+last_char
     return decoded_msg 
 
-@app.route('/Lempel_Ziv_Welch',methods = ['POST', 'GET'])
-@cross_origin()
-def Lempel_Ziv_Welch():
-     if request.method == 'POST':
-        msg = (request.form['message'])
-        Ginput=[msg]
-        cmped=LZW_compress(msg)
-        uncmped=LZW_decompress(cmped)
-        res=[(cmped),uncmped]
-        output_json={"title":"Lempel_Ziv_Welch","language":"Python","question":"Lempel_Ziv_Welch","params":Ginput,"result":res,"status":200}
-        output={"data":output_json,"status":200}
-        return jsonify(output)
 
-def LZW_compress(uncompressed):
-    dict_size = 256
-    dictionary = dict((chr(i), i) for i in range(dict_size))
-    w = ""
-    result = []
-    for c in uncompressed:
-        wc = w + c
-        if wc in dictionary:
-            w = wc
-        else:
-            result.append(dictionary[w])
-            dictionary[wc] = dict_size
-            dict_size += 1
-            w = c
-    if w:
-        result.append(dictionary[w])
-    return result
- 
- 
-def LZW_decompress(compressed):
-    from io import StringIO
-    dict_size = 256
-    dictionary = dict((i, chr(i)) for i in range(dict_size))
-    result = StringIO()
-    w = chr(compressed.pop(0))
-    result.write(w)
-    for k in compressed:
-        if k in dictionary:
-            entry = dictionary[k]
-        elif k == dict_size:
-            entry = w + w[0]
-        else:
-            raise ValueError('Bad compressed k: %s' % k)
-        result.write(entry)
-        dictionary[dict_size] = w + entry[0]
-        dict_size += 1
-        w = entry
-    return result.getvalue()
 
 if __name__ == '__main__':
     app.run()

@@ -25,6 +25,7 @@ let api={
   "huffman_technique":"huffman_technique",
   "run_length_algorithm":"run_length_algorithm",
   "Lempel_Ziv_Welch":"Lempel_Ziv_Welch",
+  "Lossless_Compressions":"Lossless_Compressions",
 }
  
 

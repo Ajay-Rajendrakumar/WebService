@@ -8,10 +8,13 @@
     "@testing-library/user-event": "^12.6.0",
     "axios": "^0.21.1",
     "bwip-js": "^2.0.11",
+    "compress-js": "^2.0.2",
+    "compressjs": "^1.0.3",
     "cors": "^2.8.5",
     "history": "^5.0.0",
     "jimp": "^0.16.1",
     "lodash": "^4.17.20",
+    "lzutf8": "^0.5.8",
     "md5": "^2.3.0",
     "moment": "^2.29.1",
     "multer": "^1.4.2",
@@ -27,7 +30,8 @@
     "reactstrap": "^8.8.1",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "web-vitals": "^0.2.4"
+    "web-vitals": "^0.2.4",
+    "zlib": "^1.0.5"
   },
   "scripts": {
     "start": "react-scripts start",

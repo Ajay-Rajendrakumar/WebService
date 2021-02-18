@@ -40,11 +40,21 @@ let questionList={
         "title":["Message"],
         "result":["Compressed","DeCompressed"]
         },
+    "Lossless_Compressions":{
+        "question":"Implement Lossless Text Compression Techniques",
+        "parameters":["message"],
+        "description":"Bzip2, Lempel–Ziv–Markov chain algorithm ANd Lempel–Ziv–Storer–Szymanski (Deflate) Text Compression Techniques.",
+        "type":["text"],
+        "no_of_inputs":1,
+        "title":["Message"],
+        "result":["BZ2 Compressed","BZ2 DeCompressed","LZMA Compressed","LZMA DeCompressed","LZSS(Deflate) Compressed","LZSS(Deflate) DeCompressed"]
+        },
 }
 let parametersList={
     "huffman_technique":["huffman_message"],
     "run_length_algorithm":["message"],
-    "Lempel_Ziv_Welch":["message"]
+    "Lempel_Ziv_Welch":["message"],
+    "Lossless_Compressions":["message"]
 }
 class Login extends Component {
     constructor(props) {
@@ -54,7 +64,7 @@ class Login extends Component {
             currentQuestion:{},
             backendList:["Python","JavaScript","PHP"],
             alphanumeric:["Number","Alphabet","AlphaNumeric"],
-            all_questions:["","huffman_technique","run_length_algorithm","Lempel_Ziv_Welch"],
+            all_questions:["","huffman_technique","run_length_algorithm","Lempel_Ziv_Welch","Lossless_Compressions"],
             selectedBackend:"Python",
             formdata:{
                huffman_message:"",
@@ -367,7 +377,7 @@ class Login extends Component {
                                         <ul className="bl-list"> 
                                         {
                                             Object.keys(key['result']).map((ans,ind)=>
-                                            <li key={ind}><span className="font-weight-bold">{ans+" : "}</span>
+                                            <li key={ind}><span className="font-weight-bold mt-1">{ans+" : "}</span>
                                                 {
                                                     key['question']==="huffman_technique"?
                                                     
