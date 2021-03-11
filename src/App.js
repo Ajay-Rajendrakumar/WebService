@@ -12,6 +12,8 @@ import Ex1 from './views/excercise1.js';
 import Ex2 from './views/excercise2.js';
 import Ex3 from './views/excercise3.js';
 
+import Ex4 from './views/portal/loginPage.js';
+
 const history = createBrowserHistory();
 
 function App() {
@@ -38,7 +40,7 @@ function App() {
                 </>
               )}
               />
-              <Route exact={true} path="/" render={() => (
+              <Route exact={true} path="/Ex3" render={() => (
                 <>
                   <Layout page={"Service Oriented Architecture & WebServices (Excercise:3)"}/>
                     <div className="main" >
@@ -47,7 +49,15 @@ function App() {
                 </>
               )}
               />
-
+              <Route exact={true} path="/" render={() => (
+                <>
+                  <Layout page={"Service Oriented Architecture & WebServices (Excercise:4)"}/>
+                    <div className="main" >
+                      <Ex4 />
+                    </div>
+                </>
+              )}
+              />
             </Switch>
             <ToastContainer />
           </main>

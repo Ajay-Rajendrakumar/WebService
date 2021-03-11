@@ -131,3 +131,34 @@ input[type=number] {
   border-radius: 9px;
   margin: 30px;
 }
+
+.login-component{
+  height:800px;
+  width: 1900px;
+  
+}
+
+.loginDiv{
+  position: absolute;
+  left:33%;
+  top:25%;
+  border-radius: 20px;
+  width: 30%;
+  height:65%;
+}
+
+.backendPosition{
+  position: fixed;
+  left:5px;
+  bottom: 5px;
+}
+.dashboard{
+  position: absolute;
+  left:33%;
+  top:25%;
+  border-radius: 20px;
+  width: 30%;
+  height:50%;
+  background-color: white;
+  border-radius: 20px;
+}

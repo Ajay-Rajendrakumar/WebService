@@ -26,6 +26,11 @@ let api={
   "run_length_algorithm":"run_length_algorithm",
   "Lempel_Ziv_Welch":"Lempel_Ziv_Welch",
   "Lossless_Compressions":"Lossless_Compressions",
+
+  "Portal_login":"Portal_login",
+  "Portal_register":"Portal_register",
+  "Portal_read":"Portal_read",
+  "Portal_changePwd":"Portal_changePwd",
 }
  
 
